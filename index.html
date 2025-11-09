@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logico - Logic Circuit Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <h1>Logico</h1>
+            <div class="toolbar-section">
+                <button id="btn-simulate" class="btn">▶ Simulate</button>
+                <button id="btn-stop" class="btn">⏸ Stop</button>
+                <button id="btn-clear" class="btn">Clear</button>
+            </div>
+            <div class="toolbar-section">
+                <button id="btn-save" class="btn">💾 Save</button>
+                <button id="btn-load" class="btn">📂 Load</button>
+                <button id="btn-import-subcircuit" class="btn">📥 Import Subcircuit</button>
+            </div>
+            <div class="toolbar-section">
+                <select id="circuit-select">
+                    <option value="main">Main Circuit</option>
+                </select>
+                <button id="btn-new-circuit" class="btn">+ New Circuit</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Component Palette -->
+            <div class="palette">
+                <h3>Components</h3>
+                
+                <div class="palette-category">
+                    <h4>Input/Output</h4>
+                    <div class="component-item" data-type="INPUT">
+                        <span>Input Pin</span>
+                    </div>
+                    <div class="component-item" data-type="OUTPUT">
+                        <span>Output Pin</span>
+                    </div>
+                    <div class="component-item" data-type="LED">
+                        <span>LED</span>
+                    </div>
+                    <div class="component-item" data-type="CLOCK">
+                        <span>Clock</span>
+                    </div>
+                </div>
+
+                <div class="palette-category">
+                    <h4>Logic Gates</h4>
+                    <div class="component-item" data-type="AND">
+                        <span>AND Gate</span>
+                    </div>
+                    <div class="component-item" data-type="OR">
+                        <span>OR Gate</span>
+                    </div>
+                    <div class="component-item" data-type="NOT">
+                        <span>NOT Gate</span>
+                    </div>
+                    <div class="component-item" data-type="XOR">
+                        <span>XOR Gate</span>
+                    </div>
+                    <div class="component-item" data-type="NAND">
+                        <span>NAND Gate</span>
+                    </div>
+                    <div class="component-item" data-type="NOR">
+                        <span>NOR Gate</span>
+                    </div>
+                </div>
+
+                <div class="palette-category">
+                    <h4>Subcircuits</h4>
+                    <div id="subcircuits-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Workspace -->
+            <div class="workspace">
+                <canvas id="canvas"></canvas>
+                <div class="info-panel">
+                    <span id="mouse-pos">X: 0, Y: 0</span>
+                    <span id="status">Ready</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="src/core/Pin.js"></script>
+    <script src="src/core/Component.js"></script>
+    <script src="src/core/Wire.js"></script>
+    <script src="src/core/Circuit.js"></script>
+    <script src="src/components/LogicGates.js"></script>
+    <script src="src/components/InputOutput.js"></script>
+    <script src="src/components/Subcircuit.js"></script>
+    <script src="src/engine/Simulator.js"></script>
+    <script src="src/renderer/Renderer.js"></script>
+    <script src="src/ui/InteractionManager.js"></script>
+    <script src="src/app/App.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
