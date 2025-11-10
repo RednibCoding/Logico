@@ -33,10 +33,25 @@
         <div class="main-content">
             <!-- Component Palette -->
             <div class="palette">
-                <h3>Components</h3>
-                <input type="text" id="component-search" class="component-search" placeholder="Search components...">
-                <div id="palette-content">
-                    <!-- Dynamically populated by ComponentRegistry -->
+                <div class="palette-tabs">
+                    <button class="palette-tab active" data-tab="components">Components</button>
+                    <button class="palette-tab" data-tab="circuits">Circuits</button>
+                </div>
+                
+                <!-- Components Tab -->
+                <div class="palette-tab-content" id="tab-components">
+                    <input type="text" id="component-search" class="component-search" placeholder="Search components...">
+                    <div id="palette-content">
+                        <!-- Dynamically populated by ComponentRegistry -->
+                    </div>
+                </div>
+                
+                <!-- Circuits Tab -->
+                <div class="palette-tab-content hidden" id="tab-circuits">
+                    <input type="text" id="circuit-search" class="component-search" placeholder="Search circuits...">
+                    <div id="circuits-content">
+                        <!-- Dynamically populated subcircuits -->
+                    </div>
                 </div>
             </div>
 

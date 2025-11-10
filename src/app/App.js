@@ -33,6 +33,7 @@ class App {
         
         this.setupUI();
         this.buildPalette(); // Build palette from registry
+        this.buildCircuitsList(); // Build circuits list
         this.updateSimulationUI(false); // Initialize UI state
         this.updateCircuitButtons(); // Initialize circuit button states
         this.startRenderLoop();
@@ -64,7 +65,7 @@ class App {
         const paletteContent = document.getElementById('palette-content');
         paletteContent.innerHTML = '';
 
-        // Get all categories (Subcircuits now appear in dropdown only)
+        // Get all categories (excluding Subcircuits from registry)
         const categories = this.componentRegistry.getAllCategories().filter(cat => cat !== 'Subcircuits');
         
         const query = searchQuery.toLowerCase().trim();
@@ -121,6 +122,50 @@ class App {
             noResults.textContent = 'No components found';
             paletteContent.appendChild(noResults);
         }
+    }
+
+    buildCircuitsList(searchQuery = '') {
+        const circuitsContent = document.getElementById('circuits-content');
+        circuitsContent.innerHTML = '';
+
+        const query = searchQuery.toLowerCase().trim();
+        
+        // Get all subcircuits (exclude main circuit)
+        const subcircuits = Array.from(this.circuits.entries())
+            .filter(([name, circuit]) => circuit.isSubcircuit && name !== 'main');
+        
+        // Filter by query if provided
+        const filteredSubcircuits = query 
+            ? subcircuits.filter(([name]) => name.toLowerCase().includes(query))
+            : subcircuits;
+        
+        if (filteredSubcircuits.length === 0) {
+            const noCircuits = document.createElement('div');
+            noCircuits.style.cssText = 'text-align: center; color: #858585; padding: 20px; font-size: 13px;';
+            noCircuits.textContent = query ? 'No circuits found' : 'No subcircuits yet';
+            circuitsContent.appendChild(noCircuits);
+            return;
+        }
+        
+        filteredSubcircuits.forEach(([name, circuit]) => {
+            const item = document.createElement('div');
+            item.className = 'component-item';
+            item.setAttribute('data-type', 'SUBCIRCUIT_' + name);
+            item.setAttribute('draggable', 'true');
+            item.setAttribute('title', `Subcircuit: ${name}`);
+            
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = name;
+            nameSpan.style.cssText = 'flex: 1;';
+            item.appendChild(nameSpan);
+            
+            // Add drag event
+            item.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('componentType', 'SUBCIRCUIT_' + name);
+            });
+            
+            circuitsContent.appendChild(item);
+        });
     }
 
     // Component factory for deserialization
@@ -197,8 +242,42 @@ class App {
             this.buildPalette(e.target.value);
         });
 
+        // Circuit search
+        document.getElementById('circuit-search').addEventListener('input', (e) => {
+            this.buildCircuitsList(e.target.value);
+        });
+
+        // Palette tabs
+        document.querySelectorAll('.palette-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                const tabName = e.target.getAttribute('data-tab');
+                this.switchPaletteTab(tabName);
+            });
+        });
+
         // Component palette drag-and-drop
         this.setupPaletteDragDrop();
+    }
+
+    switchPaletteTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.palette-tab').forEach(tab => {
+            if (tab.getAttribute('data-tab') === tabName) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        // Update tab content
+        document.querySelectorAll('.palette-tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        const targetTab = document.getElementById(`tab-${tabName}`);
+        if (targetTab) {
+            targetTab.classList.remove('hidden');
+        }
     }
 
     setupPaletteDragDrop() {
@@ -235,6 +314,9 @@ class App {
             circuit.isSubcircuit = true;
             this.componentRegistry.registerSubcircuit(name, circuit);
         }
+        
+        // Rebuild palette to show new subcircuit
+        this.buildCircuitsList();
         
         // Switch to new circuit
         selector.value = name;
@@ -423,6 +505,9 @@ class App {
             // Update circuit selector
             this.updateCircuitSelector();
 
+            // Rebuild palette to show imported subcircuits
+            this.buildCircuitsList();
+
             // Switch to saved current circuit or main
             const targetCircuit = data.currentCircuit || 'main';
             if (this.circuits.has(targetCircuit)) {
@@ -505,6 +590,9 @@ class App {
                     // Update circuit selector
                     this.updateCircuitSelector();
 
+                    // Rebuild palette to show imported subcircuits
+                    this.buildCircuitsList();
+
                     // Switch to saved current circuit or main
                     const targetCircuit = data.currentCircuit || 'main';
                     if (this.circuits.has(targetCircuit)) {
@@ -585,6 +673,9 @@ class App {
         
         // Update circuit selector
         this.updateCircuitSelector();
+        
+        // Rebuild palette to remove deleted subcircuit
+        this.buildCircuitsList();
         
         // If we're currently viewing the deleted circuit, switch to main
         if (this.currentCircuitName === name) {
@@ -732,7 +823,7 @@ class App {
         
         // Update UI
         this.updateCircuitSelector();
-        this.addSubcircuitToPanel(name);
+        this.buildCircuitsList();
         
         this.updateStatus(`Imported subcircuit: ${name}`);
     }

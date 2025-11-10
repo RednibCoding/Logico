@@ -575,6 +575,31 @@ class InteractionManager {
         // Check if it's a subcircuit
         if (type.startsWith('SUBCIRCUIT_')) {
             const circuitName = type.substring('SUBCIRCUIT_'.length);
+            
+            // Prevent adding a subcircuit to itself
+            if (this.app && this.app.currentCircuitName === circuitName) {
+                console.warn('Cannot add a subcircuit to itself');
+                if (this.app.modal) {
+                    this.app.modal.showAlert(
+                        `Cannot add subcircuit "${circuitName}" to itself.`,
+                        'Invalid Operation'
+                    );
+                }
+                return;
+            }
+            
+            // Prevent circular dependencies
+            if (this.app && this.wouldCreateCircularDependency(this.app.currentCircuitName, circuitName)) {
+                console.warn('Would create circular dependency');
+                if (this.app.modal) {
+                    this.app.modal.showAlert(
+                        `Cannot add subcircuit "${circuitName}" because it would create a circular dependency.`,
+                        'Circular Dependency'
+                    );
+                }
+                return;
+            }
+            
             // Get the actual circuit instance from the app
             const circuitInstance = this.app ? this.app.circuits.get(circuitName) : null;
             component = new SubcircuitComponent(snappedX, snappedY, circuitName, circuitInstance);
@@ -588,5 +613,44 @@ class InteractionManager {
         if (component) {
             this.circuit.addComponent(component);
         }
+    }
+
+    // Check if adding subcircuitName to currentCircuitName would create a circular dependency
+    wouldCreateCircularDependency(currentCircuitName, subcircuitName) {
+        if (!this.app || !this.app.circuits) return false;
+        
+        // Get the subcircuit we want to add
+        const subcircuit = this.app.circuits.get(subcircuitName);
+        if (!subcircuit) return false;
+        
+        // Check if the subcircuit contains the current circuit (directly or indirectly)
+        const visited = new Set();
+        
+        const containsCircuit = (circuit, targetName) => {
+            if (visited.has(circuit)) return false;
+            visited.add(circuit);
+            
+            // Check all components in this circuit
+            for (const comp of circuit.components) {
+                if (comp.type && comp.type.startsWith('SUBCIRCUIT_')) {
+                    const nestedCircuitName = comp.circuitName || comp.type.substring('SUBCIRCUIT_'.length);
+                    
+                    // Found the target circuit
+                    if (nestedCircuitName === targetName) {
+                        return true;
+                    }
+                    
+                    // Recursively check nested subcircuits
+                    const nestedCircuit = this.app.circuits.get(nestedCircuitName);
+                    if (nestedCircuit && containsCircuit(nestedCircuit, targetName)) {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+        };
+        
+        return containsCircuit(subcircuit, currentCircuitName);
     }
 }

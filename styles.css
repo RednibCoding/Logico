@@ -93,8 +93,49 @@ body {
     flex-shrink: 0;
     background: #252526;
     border-right: 1px solid #3e3e42;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.palette-tabs {
+    display: flex;
+    background: #2d2d30;
+    border-bottom: 1px solid #3e3e42;
+    flex-shrink: 0;
+}
+
+.palette-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #858585;
+    padding: 12px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.palette-tab:hover {
+    color: #cccccc;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.palette-tab.active {
+    color: #4ec9b0;
+    border-bottom-color: #4ec9b0;
+}
+
+.palette-tab-content {
     padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.palette-tab-content.hidden {
+    display: none;
 }
 
 .palette h3 {
@@ -239,20 +280,20 @@ body {
 }
 
 /* Scrollbar Styling */
-.palette::-webkit-scrollbar {
+.palette-tab-content::-webkit-scrollbar {
     width: 8px;
 }
 
-.palette::-webkit-scrollbar-track {
+.palette-tab-content::-webkit-scrollbar-track {
     background: #1e1e1e;
 }
 
-.palette::-webkit-scrollbar-thumb {
+.palette-tab-content::-webkit-scrollbar-thumb {
     background: #3e3e42;
     border-radius: 4px;
 }
 
-.palette::-webkit-scrollbar-thumb:hover {
+.palette-tab-content::-webkit-scrollbar-thumb:hover {
     background: #4e4e52;
 }
 
