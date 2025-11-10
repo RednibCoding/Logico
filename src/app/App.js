@@ -60,12 +60,14 @@ class App {
     }
 
     // Build component palette from registry
-    buildPalette() {
+    buildPalette(searchQuery = '') {
         const paletteContent = document.getElementById('palette-content');
         paletteContent.innerHTML = '';
 
         // Get all categories (Subcircuits now appear in dropdown only)
         const categories = this.componentRegistry.getAllCategories().filter(cat => cat !== 'Subcircuits');
+        
+        const query = searchQuery.toLowerCase().trim();
         
         categories.forEach(categoryName => {
             const categoryDiv = document.createElement('div');
@@ -76,7 +78,17 @@ class App {
             categoryDiv.appendChild(header);
             
             const components = this.componentRegistry.getCategory(categoryName);
+            let visibleCount = 0;
+            
             components.forEach(comp => {
+                // Filter by search query
+                if (query && !comp.name.toLowerCase().includes(query) && 
+                    !comp.description.toLowerCase().includes(query)) {
+                    return;
+                }
+                
+                visibleCount++;
+                
                 const item = document.createElement('div');
                 item.className = 'component-item';
                 item.setAttribute('data-type', comp.id);
@@ -96,8 +108,19 @@ class App {
                 categoryDiv.appendChild(item);
             });
             
-            paletteContent.appendChild(categoryDiv);
+            // Only add category if it has visible components
+            if (visibleCount > 0) {
+                paletteContent.appendChild(categoryDiv);
+            }
         });
+        
+        // Show message if no components found
+        if (query && paletteContent.children.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.style.cssText = 'text-align: center; color: #858585; padding: 20px; font-size: 13px;';
+            noResults.textContent = 'No components found';
+            paletteContent.appendChild(noResults);
+        }
     }
 
     // Component factory for deserialization
@@ -167,6 +190,11 @@ class App {
         // Circuit selector
         document.getElementById('circuit-select').addEventListener('change', (e) => {
             this.switchCircuit(e.target.value);
+        });
+
+        // Component search
+        document.getElementById('component-search').addEventListener('input', (e) => {
+            this.buildPalette(e.target.value);
         });
 
         // Component palette drag-and-drop

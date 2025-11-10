@@ -99,8 +99,29 @@ body {
 
 .palette h3 {
     color: #4ec9b0;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 16px;
+}
+
+.component-search {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    background: #3c3c3c;
+    border: 1px solid #3e3e42;
+    border-radius: 3px;
+    color: #d4d4d4;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.component-search:focus {
+    border-color: #0e639c;
+}
+
+.component-search::placeholder {
+    color: #858585;
 }
 
 .palette-category {

@@ -34,6 +34,6 @@
     "shape": "rounded-rect",
     "width": 50,
     "height": 30,
-    "customRender": "// Draw box\nctx.fillStyle = colors.component;\nctx.strokeStyle = colors.wire;\nctx.lineWidth = 2;\nconst r = 5;\nctx.beginPath();\nctx.roundRect(x - width/2, y - height/2, width, height, r);\nctx.fill();\nctx.stroke();\n\n// Draw label and frequency\nctx.fillStyle = colors.text;\nctx.font = 'bold 9px monospace';\nctx.textAlign = 'center';\nctx.fillText('CLK', x, y - 4);\nctx.font = '7px monospace';\nconst freq = (1000 / state.period).toFixed(1);\nctx.fillText(freq + 'Hz', x, y + 6);"
+    "customRender": "// Draw label and frequency (content only)\nctx.fillStyle = colors.text;\nctx.font = 'bold 9px monospace';\nctx.textAlign = 'center';\nctx.fillText('CLK', x, y - 4);\nctx.font = '7px monospace';\nconst freq = (1000 / state.period).toFixed(1);\nctx.fillText(freq + 'Hz', x, y + 6);"
   }
 }

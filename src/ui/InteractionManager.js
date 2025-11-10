@@ -22,6 +22,10 @@ class InteractionManager {
         this.selectionStart = null; // Selection box start position
         this.selectionEnd = null;   // Selection box end position
         
+        // Interactive component tracking
+        this.clickedComponent = null;
+        this.clickStartPos = null;
+        
         // Tooltip
         this.hoveredComponent = null;
         
@@ -82,14 +86,25 @@ class InteractionManager {
         // Check if clicking on a component
         const component = this.circuit.getComponentAtPoint(worldPos.x, worldPos.y);
         if (component) {
-            // Try component's onMouseDown handler first (for interactive components)
-            const localX = worldPos.x - component.x;
-            const localY = worldPos.y - component.y;
-            if (component.onMouseDown && component.onMouseDown(localX, localY)) {
-                // Component handled the event
-                return;
+            // In simulation mode, check if component is interactive
+            if (this.simulator && this.simulator.running) {
+                // Check if component has interactive handlers
+                if (component.onMouseDown || component.onMouseUp) {
+                    // Store for interactive behavior, don't start dragging
+                    this.clickedComponent = component;
+                    this.clickStartPos = { x: worldPos.x, y: worldPos.y };
+                    
+                    // Call onMouseDown immediately for press-and-hold behavior
+                    if (component.onMouseDown) {
+                        const localX = worldPos.x - component.x;
+                        const localY = worldPos.y - component.y;
+                        component.onMouseDown(localX, localY);
+                    }
+                    return;
+                }
             }
             
+            // Edit mode or non-interactive component: allow selection and dragging
             // If clicking on an unselected component while not holding Ctrl, clear selection
             if (!component.selected && !e.ctrlKey && !e.metaKey) {
                 this.circuit.clearSelection();
@@ -244,15 +259,21 @@ class InteractionManager {
             return;
         }
 
-        // Check for component mouse up handlers
-        if (!this.isDragging) {
-            const component = this.circuit.getComponentAtPoint(worldPos.x, worldPos.y);
-            if (component && component.onMouseUp) {
-                const localX = worldPos.x - component.x;
-                const localY = worldPos.y - component.y;
+        // Handle interactive components mouse up (simulation mode only)
+        if (this.clickedComponent && this.simulator && this.simulator.running) {
+            const component = this.clickedComponent;
+            const localX = worldPos.x - component.x;
+            const localY = worldPos.y - component.y;
+            
+            // Call onMouseUp to release
+            if (component.onMouseUp) {
                 component.onMouseUp(localX, localY);
             }
         }
+        
+        // Always clear click tracking
+        this.clickedComponent = null;
+        this.clickStartPos = null;
 
         // End dragging - snap to grid
         if (this.isDragging && this.draggedComponent) {
@@ -271,14 +292,14 @@ class InteractionManager {
 
         const component = this.circuit.getComponentAtPoint(worldPos.x, worldPos.y);
         if (component) {
-            // Check for INPUT component toggle (legacy)
-            if (component.type === 'INPUT') {
+            // Check for INPUT component toggle (only during simulation)
+            if (component.type === 'INPUT' && this.simulator && this.simulator.running) {
                 component.toggle();
                 return;
             }
             
-            // Open properties panel if app has one
-            if (this.app && this.app.propertiesPanel) {
+            // Open properties panel if app has one (only in edit mode)
+            if (this.app && this.app.propertiesPanel && (!this.simulator || !this.simulator.running)) {
                 this.app.propertiesPanel.show(component);
             }
         }
@@ -292,6 +313,17 @@ class InteractionManager {
     }
 
     onKeyDown(e) {
+        // Ignore keyboard shortcuts if user is typing in an input field
+        const activeElement = document.activeElement;
+        if (activeElement && (
+            activeElement.tagName === 'INPUT' || 
+            activeElement.tagName === 'TEXTAREA' || 
+            activeElement.tagName === 'SELECT' ||
+            activeElement.isContentEditable
+        )) {
+            return; // Let the input handle the event
+        }
+
         // Copy (Ctrl+C)
         if ((e.ctrlKey || e.metaKey) && e.key === 'c' && !e.shiftKey) {
             this.copySelected();

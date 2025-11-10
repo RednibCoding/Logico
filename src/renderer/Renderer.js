@@ -401,7 +401,7 @@ class Renderer {
 
             case 'circle':
                 // Circle shape - color based on state/value
-                const isActive = component.state?.value || component.getValue?.() || false;
+                const isActive = component.state?.pressed || component.state?.value || component.getValue?.() || false;
                 this.ctx.fillStyle = selected ? this.colors.componentSelected : 
                                    (isActive ? this.colors.inputOn : this.colors.inputOff);
                 this.ctx.beginPath();
@@ -443,6 +443,35 @@ class Renderer {
                     component.state,
                     this.colors
                 );
+                
+                // Draw selection border AFTER custom render so it's visible
+                if (selected) {
+                    this.ctx.strokeStyle = this.colors.wireSelected;
+                    this.ctx.lineWidth = 3;
+                    // Determine shape for selection border
+                    if (renderDef.shape === 'rounded-rect') {
+                        this.ctx.beginPath();
+                        const r = 8;
+                        this.ctx.moveTo(x - width/2 + r, y - height/2);
+                        this.ctx.lineTo(x + width/2 - r, y - height/2);
+                        this.ctx.quadraticCurveTo(x + width/2, y - height/2, x + width/2, y - height/2 + r);
+                        this.ctx.lineTo(x + width/2, y + height/2 - r);
+                        this.ctx.quadraticCurveTo(x + width/2, y + height/2, x + width/2 - r, y + height/2);
+                        this.ctx.lineTo(x - width/2 + r, y + height/2);
+                        this.ctx.quadraticCurveTo(x - width/2, y + height/2, x - width/2, y + height/2 - r);
+                        this.ctx.lineTo(x - width/2, y - height/2 + r);
+                        this.ctx.quadraticCurveTo(x - width/2, y - height/2, x - width/2 + r, y - height/2);
+                        this.ctx.closePath();
+                        this.ctx.stroke();
+                    } else if (renderDef.shape === 'circle') {
+                        this.ctx.beginPath();
+                        this.ctx.arc(x, y, Math.min(width, height) / 2, 0, Math.PI * 2);
+                        this.ctx.stroke();
+                    } else {
+                        // Default rectangle
+                        this.ctx.strokeRect(x - width/2, y - height/2, width, height);
+                    }
+                }
             } catch (error) {
                 console.error(`Error in custom render code for ${component.type}:`, error);
                 // Fall through to default label rendering on error
