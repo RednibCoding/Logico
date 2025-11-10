@@ -17,7 +17,8 @@
       "q": false,
       "lastClock": false
     },
-    "code": "const t = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nif (clock && !state.lastClock && t) {\n  state.q = !state.q;\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.q);"
+    "code": "const t = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nif (clock && !state.lastClock && t) {\n  state.q = !state.q;\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.q);",
+    "reset": "state.q = false; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

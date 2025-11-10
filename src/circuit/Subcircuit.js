@@ -126,4 +126,15 @@ class SubcircuitComponent extends Component {
         base.circuitName = this.circuitName;
         return base;
     }
+
+    reset() {
+        // Reset all components inside the subcircuit
+        if (this.circuitInstance) {
+            this.circuitInstance.components.forEach(component => {
+                if (typeof component.reset === 'function') {
+                    component.reset();
+                }
+            });
+        }
+    }
 }

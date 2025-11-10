@@ -33,7 +33,8 @@
       "count": 0,
       "lastClock": false
     },
-    "code": "const clock = inputs[0].getValue();\nconst reset = inputs[1].getValue();\nconst enable = inputs[2].getValue();\nif (reset) {\n  state.count = 0;\n} else if (clock && !state.lastClock && enable) {\n  state.count = (state.count + 1) % 65536;\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 16; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}"
+    "code": "const clock = inputs[0].getValue();\nconst reset = inputs[1].getValue();\nconst enable = inputs[2].getValue();\nif (reset) {\n  state.count = 0;\n} else if (clock && !state.lastClock && enable) {\n  state.count = (state.count + 1) % 65536;\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 16; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}",
+    "reset": "state.count = 0; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

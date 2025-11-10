@@ -30,7 +30,8 @@
       "lastClk": false,
       "timeout": 100
     },
-    "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nconst en = inputs[2].getValue();\nif (rst) {\n  state.count = 0;\n} else if (clk && !state.lastClk && en) {\n  if (state.count < state.timeout) {\n    state.count++;\n  }\n}\nstate.lastClk = clk;\nconst done = state.count >= state.timeout;\noutputs[0].setValue(state.count > 0 && !done);\noutputs[1].setValue(done);"
+    "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nconst en = inputs[2].getValue();\nif (rst) {\n  state.count = 0;\n} else if (clk && !state.lastClk && en) {\n  if (state.count < state.timeout) {\n    state.count++;\n  }\n}\nstate.lastClk = clk;\nconst done = state.count >= state.timeout;\noutputs[0].setValue(state.count > 0 && !done);\noutputs[1].setValue(done);",
+    "reset": "state.count = 0; state.lastClk = false;"
   },
   "rendering": {
     "type": "gate",

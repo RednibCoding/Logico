@@ -28,7 +28,8 @@
       "delay": 5
     },
     "init": "state.buffer = new Array(state.delay).fill(false);",
-    "code": "const input = inputs[0].getValue();\nstate.buffer[state.index] = input;\nconst output = state.buffer[(state.index + 1) % state.delay];\nstate.index = (state.index + 1) % state.delay;\noutputs[0].setValue(output);"
+    "code": "const input = inputs[0].getValue();\nstate.buffer[state.index] = input;\nconst output = state.buffer[(state.index + 1) % state.delay];\nstate.index = (state.index + 1) % state.delay;\noutputs[0].setValue(output);",
+    "reset": "state.buffer = new Array(state.delay).fill(false); state.index = 0;"
   },
   "rendering": {
     "type": "gate",

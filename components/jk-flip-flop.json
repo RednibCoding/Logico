@@ -19,7 +19,8 @@
       "q": false,
       "lastClock": false
     },
-    "code": "const j = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nconst k = inputs[2].getValue();\nif (clock && !state.lastClock) {\n  if (j && k) {\n    state.q = !state.q;\n  } else if (j) {\n    state.q = true;\n  } else if (k) {\n    state.q = false;\n  }\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.q);\noutputs[1].setValue(!state.q);"
+    "code": "const j = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nconst k = inputs[2].getValue();\nif (clock && !state.lastClock) {\n  if (j && k) {\n    state.q = !state.q;\n  } else if (j) {\n    state.q = true;\n  } else if (k) {\n    state.q = false;\n  }\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.q);\noutputs[1].setValue(!state.q);",
+    "reset": "state.q = false; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

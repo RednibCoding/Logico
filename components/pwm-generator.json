@@ -20,7 +20,8 @@
       "counter": 0,
       "lastClk": false
     },
-    "code": "const clk = inputs[0].getValue();\nif (clk && !state.lastClk) {\n  state.counter = (state.counter + 1) % 16;\n}\nstate.lastClk = clk;\nlet duty = 0;\nfor (let i = 0; i < 4; i++) {\n  if (inputs[i + 1].getValue()) duty |= (1 << i);\n}\noutputs[0].setValue(state.counter < duty);"
+    "code": "const clk = inputs[0].getValue();\nif (clk && !state.lastClk) {\n  state.counter = (state.counter + 1) % 16;\n}\nstate.lastClk = clk;\nlet duty = 0;\nfor (let i = 0; i < 4; i++) {\n  if (inputs[i + 1].getValue()) duty |= (1 << i);\n}\noutputs[0].setValue(state.counter < duty);",
+    "reset": "state.counter = 0; state.lastClk = false;"
   },
   "rendering": {
     "type": "gate",

@@ -34,7 +34,8 @@
       "value": 0,
       "lastClock": false
     },
-    "code": "const si = inputs[8].getValue();\nconst clock = inputs[9].getValue();\nconst load = inputs[10].getValue();\nconst dir = inputs[11].getValue();\nif (clock && !state.lastClock) {\n  if (load) {\n    state.value = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) state.value |= (1 << i);\n    }\n  } else {\n    if (dir) {\n      state.value = ((state.value << 1) | (si ? 1 : 0)) & 0xFF;\n    } else {\n      state.value = (state.value >> 1) | (si ? 0x80 : 0);\n    }\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.value >> i) & 1);\n}"
+    "code": "const si = inputs[8].getValue();\nconst clock = inputs[9].getValue();\nconst load = inputs[10].getValue();\nconst dir = inputs[11].getValue();\nif (clock && !state.lastClock) {\n  if (load) {\n    state.value = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) state.value |= (1 << i);\n    }\n  } else {\n    if (dir) {\n      state.value = ((state.value << 1) | (si ? 1 : 0)) & 0xFF;\n    } else {\n      state.value = (state.value >> 1) | (si ? 0x80 : 0);\n    }\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.value >> i) & 1);\n}",
+    "reset": "state.value = 0; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

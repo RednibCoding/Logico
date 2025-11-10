@@ -17,7 +17,8 @@
       "value": false,
       "lastClock": false
     },
-    "code": "const data = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nif (clock && !state.lastClock) {\n  state.value = data;\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.value);"
+    "code": "const data = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nif (clock && !state.lastClock) {\n  state.value = data;\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.value);",
+    "reset": "state.value = false; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

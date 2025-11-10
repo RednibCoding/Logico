@@ -30,7 +30,8 @@
       "memory": null
     },
     "init": "state.memory = new Array(256).fill(0);\nfor (let i = 0; i < 256; i++) state.memory[i] = i % 256;",
-    "code": "let addr = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) addr |= (1 << i);\n}\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}"
+    "code": "let addr = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) addr |= (1 << i);\n}\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}",
+    "reset": "state.memory = new Array(256).fill(0); for (let i = 0; i < 256; i++) state.memory[i] = i % 256;"
   },
   "rendering": {
     "type": "gate",

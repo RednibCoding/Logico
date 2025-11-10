@@ -35,7 +35,8 @@
       "data": 0,
       "lastClock": false
     },
-    "code": "const si = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nconst dir = inputs[2].getValue();\nconst rst = inputs[3].getValue();\nif (rst) {\n  state.data = 0;\n} else if (clock && !state.lastClock) {\n  if (dir) {\n    state.data = ((state.data << 1) | (si ? 1 : 0)) & 0xFFFF;\n  } else {\n    state.data = (state.data >> 1) | (si ? 0x8000 : 0);\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 16; i++) {\n  outputs[i].setValue((state.data >> i) & 1);\n}\noutputs[16].setValue((state.data >> (dir ? 15 : 0)) & 1);"
+    "code": "const si = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nconst dir = inputs[2].getValue();\nconst rst = inputs[3].getValue();\nif (rst) {\n  state.data = 0;\n} else if (clock && !state.lastClock) {\n  if (dir) {\n    state.data = ((state.data << 1) | (si ? 1 : 0)) & 0xFFFF;\n  } else {\n    state.data = (state.data >> 1) | (si ? 0x8000 : 0);\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 16; i++) {\n  outputs[i].setValue((state.data >> i) & 1);\n}\noutputs[16].setValue((state.data >> (dir ? 15 : 0)) & 1);",
+    "reset": "state.data = 0; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

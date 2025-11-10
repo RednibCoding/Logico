@@ -39,7 +39,8 @@
       "lastClk": false
     },
     "init": "state.buffer = new Array(16).fill(0);",
-    "code": "const wr = inputs[8].getValue();\nconst rd = inputs[9].getValue();\nconst clk = inputs[10].getValue();\nif (clk && !state.lastClk) {\n  if (wr && state.count < 16) {\n    let data = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) data |= (1 << i);\n    }\n    state.buffer[state.tail] = data;\n    state.tail = (state.tail + 1) % 16;\n    state.count++;\n  }\n  if (rd && state.count > 0) {\n    state.head = (state.head + 1) % 16;\n    state.count--;\n  }\n}\nstate.lastClk = clk;\nconst outData = state.count > 0 ? state.buffer[state.head] : 0;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((outData >> i) & 1);\n}\noutputs[8].setValue(state.count >= 16);\noutputs[9].setValue(state.count === 0);"
+    "code": "const wr = inputs[8].getValue();\nconst rd = inputs[9].getValue();\nconst clk = inputs[10].getValue();\nif (clk && !state.lastClk) {\n  if (wr && state.count < 16) {\n    let data = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) data |= (1 << i);\n    }\n    state.buffer[state.tail] = data;\n    state.tail = (state.tail + 1) % 16;\n    state.count++;\n  }\n  if (rd && state.count > 0) {\n    state.head = (state.head + 1) % 16;\n    state.count--;\n  }\n}\nstate.lastClk = clk;\nconst outData = state.count > 0 ? state.buffer[state.head] : 0;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((outData >> i) & 1);\n}\noutputs[8].setValue(state.count >= 16);\noutputs[9].setValue(state.count === 0);",
+    "reset": "state.buffer = new Array(16).fill(0); state.head = 0; state.tail = 0; state.count = 0; state.lastClk = false;"
   },
   "rendering": {
     "type": "gate",

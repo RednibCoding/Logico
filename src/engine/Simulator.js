@@ -102,11 +102,14 @@ class Simulator {
     // Reset all component states
     reset() {
         this.circuit.components.forEach(component => {
+            // Reset all pin values to false
             component.getAllPins().forEach(pin => {
                 pin.value = false;
             });
-            if (component.type === 'INPUT' || component.type === 'CLOCK') {
-                component.state = false;
+            
+            // Call component's reset method if it exists
+            if (typeof component.reset === 'function') {
+                component.reset();
             }
         });
         this.evaluate();

@@ -27,7 +27,8 @@
     },
     "code": "outputs[0].setValue(state.value);",
     "update": "if (timestamp - state.lastToggle >= state.period / 2) {\n  state.value = !state.value;\n  state.lastToggle = timestamp;\n  outputs[0].setValue(state.value);\n}",
-    "onClick": "state.value = !state.value;"
+    "onClick": "state.value = !state.value;",
+    "reset": "state.lastToggle = 0;"
   },
   "rendering": {
     "type": "gate",

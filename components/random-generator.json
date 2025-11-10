@@ -24,7 +24,8 @@
       "lfsr": 172,
       "lastClk": false
     },
-    "code": "const clk = inputs[0].getValue();\nconst en = inputs[1].getValue();\nif (clk && !state.lastClk && en) {\n  const bit = ((state.lfsr >> 0) ^ (state.lfsr >> 2) ^ (state.lfsr >> 3) ^ (state.lfsr >> 4)) & 1;\n  state.lfsr = ((state.lfsr >> 1) | (bit << 7)) & 0xFF;\n}\nstate.lastClk = clk;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.lfsr >> i) & 1);\n}"
+    "code": "const clk = inputs[0].getValue();\nconst en = inputs[1].getValue();\nif (clk && !state.lastClk && en) {\n  const bit = ((state.lfsr >> 0) ^ (state.lfsr >> 2) ^ (state.lfsr >> 3) ^ (state.lfsr >> 4)) & 1;\n  state.lfsr = ((state.lfsr >> 1) | (bit << 7)) & 0xFF;\n}\nstate.lastClk = clk;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.lfsr >> i) & 1);\n}",
+    "reset": "state.lfsr = 172; state.lastClk = false;"
   },
   "rendering": {
     "type": "gate",

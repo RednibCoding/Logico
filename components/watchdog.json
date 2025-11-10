@@ -19,7 +19,8 @@
       "lastClk": false,
       "timeout": 50
     },
-    "code": "const clk = inputs[0].getValue();\nconst kick = inputs[1].getValue();\nconst en = inputs[2].getValue();\nif (kick) {\n  state.counter = 0;\n} else if (clk && !state.lastClk && en) {\n  if (state.counter < state.timeout + 10) {\n    state.counter++;\n  }\n}\nstate.lastClk = clk;\noutputs[0].setValue(state.counter >= state.timeout);"
+    "code": "const clk = inputs[0].getValue();\nconst kick = inputs[1].getValue();\nconst en = inputs[2].getValue();\nif (kick) {\n  state.counter = 0;\n} else if (clk && !state.lastClk && en) {\n  if (state.counter < state.timeout + 10) {\n    state.counter++;\n  }\n}\nstate.lastClk = clk;\noutputs[0].setValue(state.counter >= state.timeout);",
+    "reset": "state.counter = 0; state.lastClk = false;"
   },
   "rendering": {
     "type": "gate",

@@ -18,7 +18,8 @@
       "q": false,
       "lastClk": false
     },
-    "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nif (rst) {\n  state.q = false;\n} else if (clk && !state.lastClk) {\n  state.q = !state.q;\n}\nstate.lastClk = clk;\noutputs[0].setValue(state.q);\noutputs[1].setValue(!state.q);"
+    "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nif (rst) {\n  state.q = false;\n} else if (clk && !state.lastClk) {\n  state.q = !state.q;\n}\nstate.lastClk = clk;\noutputs[0].setValue(state.q);\noutputs[1].setValue(!state.q);",
+    "reset": "state.q = false; state.lastClk = false;"
   },
   "rendering": {
     "type": "gate",

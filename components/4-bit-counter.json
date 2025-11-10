@@ -20,7 +20,8 @@
       "count": 0,
       "lastClock": false
     },
-    "code": "const clock = inputs[0].getValue();\nconst reset = inputs[1].getValue();\nif (reset) {\n  state.count = 0;\n} else if (clock && !state.lastClock) {\n  state.count = (state.count + 1) % 16;\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}"
+    "code": "const clock = inputs[0].getValue();\nconst reset = inputs[1].getValue();\nif (reset) {\n  state.count = 0;\n} else if (clock && !state.lastClock) {\n  state.count = (state.count + 1) % 16;\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}",
+    "reset": "state.count = 0; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

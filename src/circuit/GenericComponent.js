@@ -94,6 +94,37 @@ class GenericComponent extends Component {
         return false;
     }
 
+    // Reset component to initial state
+    reset() {
+        const logic = this.definition.logic;
+        
+        // Reset state to initial values from definition
+        this.state = {};
+        if (logic && logic.state) {
+            Object.assign(this.state, logic.state);
+        }
+        
+        // Run reset code if provided
+        if (logic && logic.reset) {
+            try {
+                const func = new Function('inputs', 'outputs', 'state', logic.reset);
+                func(this.inputPins, this.outputPins, this.state);
+            } catch (error) {
+                console.error(`Error in reset code for ${this.type}:`, error);
+            }
+        }
+        
+        // Re-run init code if provided
+        if (logic && logic.init) {
+            try {
+                const func = new Function('state', logic.init);
+                func(this.state);
+            } catch (error) {
+                console.error(`Error in init code during reset for ${this.type}:`, error);
+            }
+        }
+    }
+
     // Methods for backward compatibility
     toggle() {
         this.onClick();

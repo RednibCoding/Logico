@@ -26,7 +26,8 @@
       "sp": 255,
       "lastClock": false
     },
-    "code": "const clock = inputs[0].getValue();\nconst push = inputs[1].getValue();\nconst pop = inputs[2].getValue();\nconst rst = inputs[3].getValue();\nif (rst) {\n  state.sp = 255;\n} else if (clock && !state.lastClock) {\n  if (push) {\n    state.sp = (state.sp - 1 + 256) % 256;\n  } else if (pop) {\n    state.sp = (state.sp + 1) % 256;\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.sp >> i) & 1);\n}"
+    "code": "const clock = inputs[0].getValue();\nconst push = inputs[1].getValue();\nconst pop = inputs[2].getValue();\nconst rst = inputs[3].getValue();\nif (rst) {\n  state.sp = 255;\n} else if (clock && !state.lastClock) {\n  if (push) {\n    state.sp = (state.sp - 1 + 256) % 256;\n  } else if (pop) {\n    state.sp = (state.sp + 1) % 256;\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.sp >> i) & 1);\n}",
+    "reset": "state.sp = 255; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

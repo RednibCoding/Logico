@@ -41,7 +41,8 @@
       "lastClock": false
     },
     "init": "state.memory = new Array(256).fill(0);",
-    "code": "let addr = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) addr |= (1 << i);\n}\nconst we = inputs[16].getValue();\nconst clock = inputs[17].getValue();\nif (clock && !state.lastClock && we) {\n  let data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[8 + i].getValue()) data |= (1 << i);\n  }\n  state.memory[addr] = data;\n}\nstate.lastClock = clock;\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}"
+    "code": "let addr = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) addr |= (1 << i);\n}\nconst we = inputs[16].getValue();\nconst clock = inputs[17].getValue();\nif (clock && !state.lastClock && we) {\n  let data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[8 + i].getValue()) data |= (1 << i);\n  }\n  state.memory[addr] = data;\n}\nstate.lastClock = clock;\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}",
+    "reset": "state.memory = new Array(256).fill(0); state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

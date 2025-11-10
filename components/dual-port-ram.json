@@ -48,7 +48,8 @@
       "readData": 0
     },
     "init": "state.memory = new Array(64).fill(0);",
-    "code": "// Write port\nlet waddr = 0;\nfor (let i = 0; i < 6; i++) {\n  if (inputs[i].getValue()) waddr |= (1 << i);\n}\nconst we = inputs[14].getValue();\nconst wclk = inputs[15].getValue();\nif (wclk && !state.lastWClk && we) {\n  let data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[6 + i].getValue()) data |= (1 << i);\n  }\n  state.memory[waddr] = data;\n}\nstate.lastWClk = wclk;\n\n// Read port\nlet raddr = 0;\nfor (let i = 0; i < 6; i++) {\n  if (inputs[16 + i].getValue()) raddr |= (1 << i);\n}\nconst rclk = inputs[17].getValue();\nif (rclk && !state.lastRClk) {\n  state.readData = state.memory[raddr];\n}\nstate.lastRClk = rclk;\n\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.readData >> i) & 1);\n}"
+    "code": "// Write port\nlet waddr = 0;\nfor (let i = 0; i < 6; i++) {\n  if (inputs[i].getValue()) waddr |= (1 << i);\n}\nconst we = inputs[14].getValue();\nconst wclk = inputs[15].getValue();\nif (wclk && !state.lastWClk && we) {\n  let data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[6 + i].getValue()) data |= (1 << i);\n  }\n  state.memory[waddr] = data;\n}\nstate.lastWClk = wclk;\n\n// Read port\nlet raddr = 0;\nfor (let i = 0; i < 6; i++) {\n  if (inputs[16 + i].getValue()) raddr |= (1 << i);\n}\nconst rclk = inputs[17].getValue();\nif (rclk && !state.lastRClk) {\n  state.readData = state.memory[raddr];\n}\nstate.lastRClk = rclk;\n\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.readData >> i) & 1);\n}",
+    "reset": "state.memory = new Array(64).fill(0); state.lastWClk = false; state.lastRClk = false; state.readData = 0;"
   },
   "rendering": {
     "type": "gate",

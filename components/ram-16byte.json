@@ -36,7 +36,8 @@
       "memory": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
       "lastClock": false
     },
-    "code": "const addr = (inputs[3].getValue() ? 8 : 0) + (inputs[2].getValue() ? 4 : 0) + (inputs[1].getValue() ? 2 : 0) + (inputs[0].getValue() ? 1 : 0);\nconst we = inputs[12].getValue();\nconst clock = inputs[13].getValue();\nif (clock && !state.lastClock && we) {\n  let data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[4 + i].getValue()) data |= (1 << i);\n  }\n  state.memory[addr] = data;\n}\nstate.lastClock = clock;\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}"
+    "code": "const addr = (inputs[3].getValue() ? 8 : 0) + (inputs[2].getValue() ? 4 : 0) + (inputs[1].getValue() ? 2 : 0) + (inputs[0].getValue() ? 1 : 0);\nconst we = inputs[12].getValue();\nconst clock = inputs[13].getValue();\nif (clock && !state.lastClock && we) {\n  let data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[4 + i].getValue()) data |= (1 << i);\n  }\n  state.memory[addr] = data;\n}\nstate.lastClock = clock;\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}",
+    "reset": "state.memory = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",

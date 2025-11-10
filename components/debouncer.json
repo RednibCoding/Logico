@@ -17,7 +17,8 @@
       "lastInput": false,
       "counter": 0
     },
-    "code": "const input = inputs[0].getValue();\nif (input !== state.lastInput) {\n  state.counter = 0;\n  state.lastInput = input;\n} else {\n  if (state.counter < 5) {\n    state.counter++;\n  } else {\n    state.stable = input;\n  }\n}\noutputs[0].setValue(state.stable);"
+    "code": "const input = inputs[0].getValue();\nif (input !== state.lastInput) {\n  state.counter = 0;\n  state.lastInput = input;\n} else {\n  if (state.counter < 5) {\n    state.counter++;\n  } else {\n    state.stable = input;\n  }\n}\noutputs[0].setValue(state.stable);",
+    "reset": "state.stable = false; state.lastInput = false; state.counter = 0;"
   },
   "rendering": {
     "type": "gate",

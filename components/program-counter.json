@@ -34,7 +34,8 @@
       "pc": 0,
       "lastClock": false
     },
-    "code": "const clock = inputs[8].getValue();\nconst inc = inputs[9].getValue();\nconst load = inputs[10].getValue();\nconst rst = inputs[11].getValue();\nif (rst) {\n  state.pc = 0;\n} else if (clock && !state.lastClock) {\n  if (load) {\n    state.pc = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) state.pc |= (1 << i);\n    }\n  } else if (inc) {\n    state.pc = (state.pc + 1) % 256;\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.pc >> i) & 1);\n}"
+    "code": "const clock = inputs[8].getValue();\nconst inc = inputs[9].getValue();\nconst load = inputs[10].getValue();\nconst rst = inputs[11].getValue();\nif (rst) {\n  state.pc = 0;\n} else if (clock && !state.lastClock) {\n  if (load) {\n    state.pc = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) state.pc |= (1 << i);\n    }\n  } else if (inc) {\n    state.pc = (state.pc + 1) % 256;\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.pc >> i) & 1);\n}",
+    "reset": "state.pc = 0; state.lastClock = false;"
   },
   "rendering": {
     "type": "gate",
