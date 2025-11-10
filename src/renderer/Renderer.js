@@ -189,6 +189,23 @@ class Renderer {
             this.ctx.fill();
             this.ctx.stroke();
         }
+
+        // Draw pin label if it exists
+        if (pin.label && pin.label.trim() !== '') {
+            this.ctx.fillStyle = this.colors.text;
+            this.ctx.font = '9px monospace';
+            this.ctx.textBaseline = 'middle';
+            
+            if (pin.type === 'input') {
+                // Label to the left of input pins
+                this.ctx.textAlign = 'right';
+                this.ctx.fillText(pin.label, x - 8, y);
+            } else {
+                // Label to the right of output pins
+                this.ctx.textAlign = 'left';
+                this.ctx.fillText(pin.label, x + 8, y);
+            }
+        }
     }
 
     drawWire(wire) {

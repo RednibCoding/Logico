@@ -21,15 +21,15 @@ class Component {
     }
 
     // Add an input pin at a specific offset
-    addInputPin(offsetX, offsetY) {
-        const pin = new Pin(this, 'input', this.inputPins.length, offsetX, offsetY);
+    addInputPin(offsetX, offsetY, label = '') {
+        const pin = new Pin(this, 'input', this.inputPins.length, offsetX, offsetY, label);
         this.inputPins.push(pin);
         return pin;
     }
 
     // Add an output pin at a specific offset
-    addOutputPin(offsetX, offsetY) {
-        const pin = new Pin(this, 'output', this.outputPins.length, offsetX, offsetY);
+    addOutputPin(offsetX, offsetY, label = '') {
+        const pin = new Pin(this, 'output', this.outputPins.length, offsetX, offsetY, label);
         this.outputPins.push(pin);
         return pin;
     }

@@ -1,11 +1,12 @@
 // Pin class - represents connection points on components
 class Pin {
-    constructor(component, type, index, offsetX, offsetY) {
+    constructor(component, type, index, offsetX, offsetY, label = '') {
         this.component = component;
         this.type = type; // 'input' or 'output'
         this.index = index;
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.label = label; // Label for this pin
         this.value = false; // logical value (true/false or 1/0)
         this.connectedWires = []; // wires connected to this pin
     }
