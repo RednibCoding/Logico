@@ -1,0 +1,25 @@
+{
+  "id": "NAND",
+  "name": "NAND Gate",
+  "category": "Logic Gates",
+  "description": "Inverted AND gate",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10 },
+      { "x": -30, "y": 10 }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0 }
+    ]
+  },
+  "logic": {
+    "code": "const result = !inputs.every(pin => pin.getValue());\noutputs[0].setValue(result);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "nand",
+    "width": 60,
+    "height": 40,
+    "label": "&"
+  }
+}

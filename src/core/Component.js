@@ -41,8 +41,9 @@ class Component {
 
     // Check if a point is inside the component
     containsPoint(x, y) {
-        return x >= this.x && x <= this.x + this.width &&
-               y >= this.y && y <= this.y + this.height;
+        // Components are centered at (this.x, this.y)
+        return x >= this.x - this.width / 2 && x <= this.x + this.width / 2 &&
+               y >= this.y - this.height / 2 && y <= this.y + this.height / 2;
     }
 
     // Find pin at a specific point

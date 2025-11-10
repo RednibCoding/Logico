@@ -410,45 +410,18 @@ class InteractionManager {
     cloneComponent(component) {
         let clone = null;
         
-        switch (component.type) {
-            case 'AND':
-                clone = new ANDGate(component.x, component.y, component.numInputs);
-                break;
-            case 'OR':
-                clone = new ORGate(component.x, component.y, component.numInputs);
-                break;
-            case 'NOT':
-                clone = new NOTGate(component.x, component.y);
-                break;
-            case 'XOR':
-                clone = new XORGate(component.x, component.y);
-                break;
-            case 'NAND':
-                clone = new NANDGate(component.x, component.y, component.numInputs);
-                break;
-            case 'NOR':
-                clone = new NORGate(component.x, component.y, component.numInputs);
-                break;
-            case 'INPUT':
-                clone = new InputPin(component.x, component.y);
-                clone.state = component.state;
-                break;
-            case 'OUTPUT':
-                clone = new OutputPin(component.x, component.y);
-                break;
-            case 'CLOCK':
-                clone = new Clock(component.x, component.y);
-                clone.period = component.period;
-                break;
-            case 'LED':
-                clone = new LED(component.x, component.y);
-                break;
-            case 'SUBCIRCUIT':
-                clone = new SubcircuitComponent(component.x, component.y, component.circuitName, component.circuitInstance);
-                break;
-            default:
-                // Generic fallback
-                clone = new Component(component.type, component.x, component.y, component.width, component.height);
+        // Use component registry for all JSON-defined components
+        if (component instanceof GenericComponent) {
+            const definition = component.definition;
+            clone = new GenericComponent(component.x, component.y, definition);
+            
+            // Copy state if it exists
+            if (component.state && typeof component.state === 'object') {
+                clone.state = JSON.parse(JSON.stringify(component.state));
+            }
+        } else if (component.type === 'SUBCIRCUIT') {
+            // Handle subcircuits separately
+            clone = new SubcircuitComponent(component.x, component.y, component.circuitName, component.circuitInstance);
         }
         
         if (clone) {
@@ -535,37 +508,9 @@ class InteractionManager {
             const circuitInstance = this.app ? this.app.circuits.get(circuitName) : null;
             component = new SubcircuitComponent(snappedX, snappedY, circuitName, circuitInstance);
         } else {
-            switch (type) {
-                case 'AND':
-                    component = new ANDGate(snappedX, snappedY);
-                    break;
-                case 'OR':
-                    component = new ORGate(snappedX, snappedY);
-                    break;
-                case 'NOT':
-                    component = new NOTGate(snappedX, snappedY);
-                    break;
-                case 'XOR':
-                    component = new XORGate(snappedX, snappedY);
-                    break;
-                case 'NAND':
-                    component = new NANDGate(snappedX, snappedY);
-                    break;
-                case 'NOR':
-                    component = new NORGate(snappedX, snappedY);
-                    break;
-                case 'INPUT':
-                    component = new InputPin(snappedX, snappedY);
-                    break;
-                case 'OUTPUT':
-                    component = new OutputPin(snappedX, snappedY);
-                    break;
-                case 'CLOCK':
-                    component = new Clock(snappedX, snappedY);
-                    break;
-                case 'LED':
-                    component = new LED(snappedX, snappedY);
-                    break;
+            // Use registry to create component
+            if (this.app && this.app.componentRegistry) {
+                component = this.app.componentRegistry.create(type, snappedX, snappedY);
             }
         }
 

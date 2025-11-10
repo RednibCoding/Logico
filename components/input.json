@@ -1,0 +1,26 @@
+{
+  "id": "INPUT",
+  "name": "Input Pin",
+  "category": "Input/Output",
+  "description": "User-controllable input signal (double-click to toggle)",
+  "pins": {
+    "inputs": [],
+    "outputs": [
+      { "x": 15, "y": 0 }
+    ]
+  },
+  "logic": {
+    "state": {
+      "value": false
+    },
+    "code": "outputs[0].setValue(state.value);",
+    "onClick": "state.value = !state.value;"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "circle",
+    "width": 30,
+    "height": 30,
+    "label": "IN"
+  }
+}

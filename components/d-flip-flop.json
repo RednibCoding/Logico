@@ -1,0 +1,29 @@
+{
+  "id": "D_FLIP_FLOP",
+  "name": "D Flip-Flop",
+  "category": "Sequential",
+  "description": "D-type flip-flop with rising edge trigger",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10, "label": "D" },
+      { "x": -30, "y": 10, "label": "CLK" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "Q" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "value": false,
+      "lastClock": false
+    },
+    "code": "const data = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nif (clock && !state.lastClock) {\n  state.value = data;\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.value);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 50,
+    "label": "D-FF"
+  }
+}

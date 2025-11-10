@@ -116,52 +116,20 @@ class Renderer {
         const x = component.x;
         const y = component.y;
 
-        // Component body - use yellow border when selected
-        this.ctx.fillStyle = component.selected ? this.colors.componentSelected : this.colors.component;
-        this.ctx.strokeStyle = component.selected ? this.colors.wireSelected : this.colors.componentBorder;
-        this.ctx.lineWidth = component.selected ? 3 : 2;
-
-        // Draw based on type
-        switch (component.type) {
-            case 'AND':
-                this.drawANDGate(x, y, component.width, component.height, component.selected);
-                break;
-            case 'OR':
-                this.drawORGate(x, y, component.width, component.height, component.selected);
-                break;
-            case 'NOT':
-                this.drawNOTGate(x, y, component.width, component.height, component.selected);
-                break;
-            case 'XOR':
-                this.drawXORGate(x, y, component.width, component.height, component.selected);
-                break;
-            case 'NAND':
-                this.drawNANDGate(x, y, component.width, component.height, component.selected);
-                break;
-            case 'NOR':
-                this.drawNORGate(x, y, component.width, component.height, component.selected);
-                break;
-            case 'INPUT':
-                this.drawInputPin(x, y, component.width, component.height, component.state, component.selected);
-                break;
-            case 'OUTPUT':
-                this.drawOutputPin(x, y, component.width, component.height, component.getValue(), component.selected);
-                break;
-            case 'CLOCK':
-                this.drawClock(x, y, component.width, component.height, component.state, component.selected);
-                break;
-            case 'LED':
-                this.drawLED(x, y, component.width, component.height, component.getValue(), component.selected);
-                break;
-            case 'SUBCIRCUIT':
-                this.drawSubcircuit(x, y, component.width, component.height, component.circuitName, component.selected);
-                break;
-            default:
-                this.drawGenericComponent(x, y, component.width, component.height, component.type, component.selected);
+        // All components are now GenericComponents with rendering definitions
+        if (component instanceof GenericComponent) {
+            this.drawGenericFromDef(component);
+            return;
         }
 
-        // Draw pins
-        component.getAllPins().forEach(pin => this.drawPin(pin));
+        // Only subcircuits use the old rendering path
+        if (component.type === 'SUBCIRCUIT') {
+            this.ctx.fillStyle = component.selected ? this.colors.componentSelected : this.colors.component;
+            this.ctx.strokeStyle = component.selected ? this.colors.wireSelected : this.colors.componentBorder;
+            this.ctx.lineWidth = component.selected ? 3 : 2;
+            this.drawSubcircuit(x, y, component.width, component.height, component.circuitName, component.selected);
+            component.getAllPins().forEach(pin => this.drawPin(pin));
+        }
 
         // Draw label if exists
         if (component.label) {
@@ -170,174 +138,6 @@ class Renderer {
             this.ctx.textAlign = 'center';
             this.ctx.fillText(component.label, x + component.width / 2, y - 5);
         }
-    }
-
-    drawANDGate(x, y, w, h, selected) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x, y);
-        this.ctx.lineTo(x + w * 0.6, y);
-        this.ctx.arc(x + w * 0.6, y + h / 2, h / 2, -Math.PI / 2, Math.PI / 2);
-        this.ctx.lineTo(x, y + h);
-        this.ctx.closePath();
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        // Label
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = '10px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('&', x + w * 0.4, y + h / 2 + 4);
-    }
-
-    drawORGate(x, y, w, h, selected) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x, y);
-        this.ctx.quadraticCurveTo(x + w * 0.6, y, x + w * 0.9, y + h / 2);
-        this.ctx.quadraticCurveTo(x + w * 0.6, y + h, x, y + h);
-        this.ctx.quadraticCurveTo(x + w * 0.2, y + h / 2, x, y);
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = '10px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('≥1', x + w * 0.5, y + h / 2 + 4);
-    }
-
-    drawNOTGate(x, y, w, h, selected) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(x, y);
-        this.ctx.lineTo(x + w - 6, y + h / 2);
-        this.ctx.lineTo(x, y + h);
-        this.ctx.closePath();
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        // Bubble
-        this.ctx.beginPath();
-        this.ctx.arc(x + w - 3, y + h / 2, 3, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = '10px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('1', x + w * 0.3, y + h / 2 + 4);
-    }
-
-    drawXORGate(x, y, w, h, selected) {
-        // Draw OR gate shape
-        this.drawORGate(x, y, w, h, selected);
-        
-        // Add extra curve for XOR
-        this.ctx.beginPath();
-        this.ctx.moveTo(x - 4, y);
-        this.ctx.quadraticCurveTo(x + w * 0.15, y + h / 2, x - 4, y + h);
-        this.ctx.stroke();
-
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = '10px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText('=1', x + w * 0.5, y + h / 2 + 4);
-    }
-
-    drawNANDGate(x, y, w, h, selected) {
-        this.drawANDGate(x, y, w - 6, h, selected);
-        
-        // Bubble
-        this.ctx.beginPath();
-        this.ctx.arc(x + w - 3, y + h / 2, 3, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.stroke();
-    }
-
-    drawNORGate(x, y, w, h, selected) {
-        this.drawORGate(x, y, w - 6, h, selected);
-        
-        // Bubble
-        this.ctx.beginPath();
-        this.ctx.arc(x + w - 3, y + h / 2, 3, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.stroke();
-    }
-
-    drawInputPin(x, y, w, h, state, selected) {
-        this.ctx.fillStyle = state ? this.colors.inputOn : this.colors.inputOff;
-        this.ctx.strokeStyle = selected ? this.colors.wireSelected : this.colors.componentBorder;
-        this.ctx.lineWidth = selected ? 3 : 2;
-        
-        this.ctx.beginPath();
-        this.ctx.arc(x + w / 2, y + h / 2, h / 2, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = 'bold 14px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText(state ? '1' : '0', x + w / 2, y + h / 2 + 5);
-    }
-
-    drawOutputPin(x, y, w, h, state, selected) {
-        this.ctx.fillStyle = state ? this.colors.outputOn : this.colors.outputOff;
-        this.ctx.strokeStyle = selected ? this.colors.wireSelected : this.colors.componentBorder;
-        this.ctx.lineWidth = selected ? 3 : 2;
-        
-        this.ctx.fillRect(x, y, w, h);
-        this.ctx.strokeRect(x, y, w, h);
-
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = 'bold 14px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText(state ? '1' : '0', x + w / 2, y + h / 2 + 5);
-    }
-
-    drawClock(x, y, w, h, state, selected) {
-        this.ctx.fillStyle = state ? this.colors.inputOn : this.colors.inputOff;
-        this.ctx.strokeStyle = selected ? this.colors.wireSelected : this.colors.componentBorder;
-        this.ctx.lineWidth = selected ? 3 : 2;
-        
-        this.ctx.fillRect(x, y, w, h);
-        this.ctx.strokeRect(x, y, w, h);
-
-        // Draw clock wave
-        this.ctx.strokeStyle = this.colors.text;
-        this.ctx.beginPath();
-        this.ctx.moveTo(x + 5, y + h - 5);
-        this.ctx.lineTo(x + 5, y + 5);
-        this.ctx.lineTo(x + w / 2, y + 5);
-        this.ctx.lineTo(x + w / 2, y + h - 5);
-        this.ctx.lineTo(x + w - 5, y + h - 5);
-        this.ctx.stroke();
-    }
-
-    drawLED(x, y, w, h, state, selected) {
-        // Draw LED circle
-        this.ctx.fillStyle = state ? '#ff4444' : '#4a1a1a';
-        this.ctx.strokeStyle = selected ? this.colors.wireSelected : '#888888';
-        this.ctx.lineWidth = selected ? 3 : 2;
-        
-        this.ctx.beginPath();
-        this.ctx.arc(x + w / 2, y + h / 2, w / 2, 0, Math.PI * 2);
-        this.ctx.fill();
-        this.ctx.stroke();
-
-        // Add glow effect when on
-        if (state) {
-            this.ctx.fillStyle = 'rgba(255, 68, 68, 0.3)';
-            this.ctx.beginPath();
-            this.ctx.arc(x + w / 2, y + h / 2, w / 2 + 4, 0, Math.PI * 2);
-            this.ctx.fill();
-        }
-    }
-
-    drawGenericComponent(x, y, w, h, type, selected) {
-        this.ctx.fillRect(x, y, w, h);
-        this.ctx.strokeRect(x, y, w, h);
-
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = '10px sans-serif';
-        this.ctx.textAlign = 'center';
-        this.ctx.fillText(type, x + w / 2, y + h / 2 + 4);
     }
 
     drawSubcircuit(x, y, w, h, circuitName, selected) {
@@ -475,5 +275,169 @@ class Renderer {
         
         this.offsetX += x - newScreenPos.x;
         this.offsetY += y - newScreenPos.y;
+    }
+
+    // Draw generic component from JSON definition
+    drawGenericFromDef(component) {
+        const renderDef = component.getRenderingDef();
+        const x = component.x;
+        const y = component.y;
+        const selected = component.selected;
+
+        // All components now use generic shape-based rendering
+        const width = renderDef.width || 60;
+        const height = renderDef.height || 40;
+        const label = renderDef.label || component.type;
+
+        this.ctx.fillStyle = selected ? this.colors.componentSelected : this.colors.component;
+        this.ctx.strokeStyle = selected ? this.colors.wireSelected : this.colors.componentBorder;
+        this.ctx.lineWidth = selected ? 3 : 2;
+
+        // Draw shape
+        switch (renderDef.shape) {
+            case 'and':
+                // Traditional AND gate shape
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - width/2, y - height/2);
+                this.ctx.lineTo(x + width * 0.1, y - height/2);
+                this.ctx.arc(x + width * 0.1, y, height / 2, -Math.PI / 2, Math.PI / 2);
+                this.ctx.lineTo(x - width/2, y + height/2);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+
+            case 'or':
+                // Traditional OR gate shape
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - width/2, y - height/2);
+                this.ctx.quadraticCurveTo(x + width * 0.1, y - height/2, x + width * 0.4, y);
+                this.ctx.quadraticCurveTo(x + width * 0.1, y + height/2, x - width/2, y + height/2);
+                this.ctx.quadraticCurveTo(x - width * 0.3, y, x - width/2, y - height/2);
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+
+            case 'xor':
+                // Traditional XOR gate shape with extra arc
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - width/2 + 5, y - height/2);
+                this.ctx.quadraticCurveTo(x + width * 0.1, y - height/2, x + width * 0.4, y);
+                this.ctx.quadraticCurveTo(x + width * 0.1, y + height/2, x - width/2 + 5, y + height/2);
+                this.ctx.quadraticCurveTo(x - width * 0.3 + 5, y, x - width/2 + 5, y - height/2);
+                this.ctx.fill();
+                this.ctx.stroke();
+                // Extra arc for XOR
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - width/2, y - height/2);
+                this.ctx.quadraticCurveTo(x - width * 0.3, y, x - width/2, y + height/2);
+                this.ctx.stroke();
+                break;
+
+            case 'nand':
+                // AND gate with inversion bubble
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - width/2, y - height/2);
+                this.ctx.lineTo(x + width * 0.05, y - height/2);
+                this.ctx.arc(x + width * 0.05, y, height / 2, -Math.PI / 2, Math.PI / 2);
+                this.ctx.lineTo(x - width/2, y + height/2);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.stroke();
+                // Inversion bubble
+                this.ctx.beginPath();
+                this.ctx.arc(x + width * 0.35, y, 4, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+
+            case 'nor':
+                // OR gate with inversion bubble
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - width/2, y - height/2);
+                this.ctx.quadraticCurveTo(x + width * 0.05, y - height/2, x + width * 0.35, y);
+                this.ctx.quadraticCurveTo(x + width * 0.05, y + height/2, x - width/2, y + height/2);
+                this.ctx.quadraticCurveTo(x - width * 0.3, y, x - width/2, y - height/2);
+                this.ctx.fill();
+                this.ctx.stroke();
+                // Inversion bubble
+                this.ctx.beginPath();
+                this.ctx.arc(x + width * 0.42, y, 4, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+
+            case 'rounded-rect':
+                this.ctx.beginPath();
+                const radius = 8;
+                this.ctx.moveTo(x - width/2 + radius, y - height/2);
+                this.ctx.lineTo(x + width/2 - radius, y - height/2);
+                this.ctx.quadraticCurveTo(x + width/2, y - height/2, x + width/2, y - height/2 + radius);
+                this.ctx.lineTo(x + width/2, y + height/2 - radius);
+                this.ctx.quadraticCurveTo(x + width/2, y + height/2, x + width/2 - radius, y + height/2);
+                this.ctx.lineTo(x - width/2 + radius, y + height/2);
+                this.ctx.quadraticCurveTo(x - width/2, y + height/2, x - width/2, y + height/2 - radius);
+                this.ctx.lineTo(x - width/2, y - height/2 + radius);
+                this.ctx.quadraticCurveTo(x - width/2, y - height/2, x - width/2 + radius, y - height/2);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+
+            case 'triangle':
+                this.ctx.beginPath();
+                this.ctx.moveTo(x - width/2, y - height/2);
+                this.ctx.lineTo(x + width/2, y);
+                this.ctx.lineTo(x - width/2, y + height/2);
+                this.ctx.closePath();
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+
+            case 'circle':
+                // Circle shape - color based on state/value
+                const isActive = component.state?.value || component.getValue?.() || false;
+                this.ctx.fillStyle = selected ? this.colors.componentSelected : 
+                                   (isActive ? this.colors.inputOn : this.colors.inputOff);
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, Math.min(width, height) / 2, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.stroke();
+                break;
+
+            case 'rect':
+                // Rectangle - color based on state/value for OUTPUT/LED
+                const isRectActive = component.getValue?.() || false;
+                this.ctx.fillStyle = selected ? this.colors.componentSelected :
+                                   (isRectActive ? this.colors.outputOn : this.colors.outputOff);
+                this.ctx.fillRect(x - width/2, y - height/2, width, height);
+                this.ctx.strokeRect(x - width/2, y - height/2, width, height);
+                break;
+
+            default: // default rectangle
+                this.ctx.fillRect(x - width/2, y - height/2, width, height);
+                this.ctx.strokeRect(x - width/2, y - height/2, width, height);
+        }
+
+        // Draw label
+        this.ctx.fillStyle = this.colors.text;
+        this.ctx.font = '10px monospace';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        
+        // Adjust label position based on shape
+        let labelX = x;
+        if (renderDef.shape === 'and' || renderDef.shape === 'nand') {
+            labelX = x - width * 0.1; // Shift slightly left for AND shapes
+        } else if (renderDef.shape === 'or' || renderDef.shape === 'nor' || renderDef.shape === 'xor') {
+            labelX = x - width * 0.1; // Shift more left for OR shapes
+        } else if (renderDef.shape === 'triangle') {
+            labelX = x - width * 0.25; // Shift more left for triangle (NOT/BUFFER)
+        }
+        
+        this.ctx.fillText(label, labelX, y);
+
+        // Draw pins
+        component.getAllPins().forEach(pin => this.drawPin(pin, selected));
     }
 }

@@ -1,0 +1,25 @@
+{
+  "id": "OR",
+  "name": "OR Gate",
+  "category": "Logic Gates",
+  "description": "Outputs true when any input is true",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10 },
+      { "x": -30, "y": 10 }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0 }
+    ]
+  },
+  "logic": {
+    "code": "const result = inputs.some(pin => pin.getValue());\noutputs[0].setValue(result);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "or",
+    "width": 60,
+    "height": 40,
+    "label": "≥1"
+  }
+}

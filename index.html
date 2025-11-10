@@ -26,6 +26,8 @@
                     <option value="main">Main Circuit</option>
                 </select>
                 <button id="btn-new-circuit" class="btn">+ New Circuit</button>
+                <button id="btn-export-circuit" class="btn">📤 Export</button>
+                <button id="btn-delete-circuit" class="btn btn-danger">🗑 Delete</button>
             </div>
         </div>
 
@@ -33,50 +35,8 @@
             <!-- Component Palette -->
             <div class="palette">
                 <h3>Components</h3>
-                
-                <div class="palette-category">
-                    <h4>Input/Output</h4>
-                    <div class="component-item" data-type="INPUT">
-                        <span>Input Pin</span>
-                    </div>
-                    <div class="component-item" data-type="OUTPUT">
-                        <span>Output Pin</span>
-                    </div>
-                    <div class="component-item" data-type="LED">
-                        <span>LED</span>
-                    </div>
-                    <div class="component-item" data-type="CLOCK">
-                        <span>Clock</span>
-                    </div>
-                </div>
-
-                <div class="palette-category">
-                    <h4>Logic Gates</h4>
-                    <div class="component-item" data-type="AND">
-                        <span>AND Gate</span>
-                    </div>
-                    <div class="component-item" data-type="OR">
-                        <span>OR Gate</span>
-                    </div>
-                    <div class="component-item" data-type="NOT">
-                        <span>NOT Gate</span>
-                    </div>
-                    <div class="component-item" data-type="XOR">
-                        <span>XOR Gate</span>
-                    </div>
-                    <div class="component-item" data-type="NAND">
-                        <span>NAND Gate</span>
-                    </div>
-                    <div class="component-item" data-type="NOR">
-                        <span>NOR Gate</span>
-                    </div>
-                </div>
-
-                <div class="palette-category">
-                    <h4>Subcircuits</h4>
-                    <div id="subcircuits-list">
-                        <!-- Dynamically populated -->
-                    </div>
+                <div id="palette-content">
+                    <!-- Dynamically populated by ComponentRegistry -->
                 </div>
             </div>
 
@@ -91,16 +51,34 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Confirm</h3>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message"></p>
+                <input type="text" id="modal-input" class="modal-input" style="display: none;">
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel" class="btn">Cancel</button>
+                <button id="modal-confirm" class="btn">OK</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="src/core/Pin.js"></script>
     <script src="src/core/Component.js"></script>
     <script src="src/core/Wire.js"></script>
     <script src="src/core/Circuit.js"></script>
-    <script src="src/components/LogicGates.js"></script>
-    <script src="src/components/InputOutput.js"></script>
-    <script src="src/components/Subcircuit.js"></script>
+    <script src="src/circuit/Subcircuit.js"></script>
+    <script src="src/circuit/GenericComponent.js"></script>
+    <script src="src/circuit/ComponentRegistry.js"></script>
     <script src="src/engine/Simulator.js"></script>
     <script src="src/renderer/Renderer.js"></script>
+    <script src="src/ui/Modal.js"></script>
     <script src="src/ui/InteractionManager.js"></script>
     <script src="src/app/App.js"></script>
     <script src="main.js"></script>

@@ -1,0 +1,24 @@
+{
+  "id": "BUFFER",
+  "name": "Buffer",
+  "category": "Logic Gates",
+  "description": "Passes signal through without modification",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0 }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0 }
+    ]
+  },
+  "logic": {
+    "code": "outputs[0].setValue(inputs[0].getValue());"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "triangle",
+    "width": 50,
+    "height": 30,
+    "label": "BUF"
+  }
+}

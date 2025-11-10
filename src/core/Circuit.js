@@ -118,7 +118,7 @@ class Circuit {
     }
 
     // Deserialize circuit from saved data (instance method)
-    deserialize(data, circuits) {
+    deserialize(data, circuits, componentFactory = null) {
         // Clear current circuit
         this.clear();
         
@@ -127,44 +127,16 @@ class Circuit {
         data.components.forEach(compData => {
             let component = null;
             
-            // Check if it's a subcircuit
-            if (compData.type.startsWith('SUBCIRCUIT_')) {
+            // Try to use component factory first
+            if (componentFactory) {
+                component = componentFactory(compData.type, compData.x, compData.y, compData.circuitName);
+            }
+            
+            // Fallback for subcircuits if factory didn't handle it
+            if (!component && compData.type.startsWith('SUBCIRCUIT_')) {
                 const circuitName = compData.circuitName || compData.type.substring('SUBCIRCUIT_'.length);
                 const circuitInstance = circuits.get(circuitName);
                 component = new SubcircuitComponent(compData.x, compData.y, circuitName, circuitInstance);
-            } else {
-                switch (compData.type) {
-                    case 'AND':
-                        component = new ANDGate(compData.x, compData.y);
-                        break;
-                    case 'OR':
-                        component = new ORGate(compData.x, compData.y);
-                        break;
-                    case 'NOT':
-                        component = new NOTGate(compData.x, compData.y);
-                        break;
-                    case 'XOR':
-                        component = new XORGate(compData.x, compData.y);
-                        break;
-                    case 'NAND':
-                        component = new NANDGate(compData.x, compData.y);
-                        break;
-                    case 'NOR':
-                        component = new NORGate(compData.x, compData.y);
-                        break;
-                    case 'INPUT':
-                        component = new InputPin(compData.x, compData.y);
-                        break;
-                    case 'OUTPUT':
-                        component = new OutputPin(compData.x, compData.y);
-                        break;
-                    case 'CLOCK':
-                        component = new Clock(compData.x, compData.y);
-                        break;
-                    case 'LED':
-                        component = new LED(compData.x, compData.y);
-                        break;
-                }
             }
             
             if (component) {
@@ -172,8 +144,14 @@ class Circuit {
                 component.label = compData.label || '';
                 
                 // Restore state for stateful components
-                if (compData.state !== undefined && component.state !== undefined) {
-                    component.state = compData.state;
+                if (compData.state !== undefined) {
+                    if (typeof component.state === 'object' && component.state !== null) {
+                        // State is an object, merge properties
+                        Object.assign(component.state, compData.state);
+                    } else {
+                        // State is a primitive value
+                        component.state = compData.state;
+                    }
                 }
                 
                 this.addComponent(component);

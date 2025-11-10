@@ -58,6 +58,18 @@ body {
     background: #0d5689;
 }
 
+.btn-danger {
+    background: #d32f2f;
+}
+
+.btn-danger:hover {
+    background: #f44336;
+}
+
+.btn-danger:active {
+    background: #b71c1c;
+}
+
 #circuit-select {
     background: #3c3c3c;
     color: #d4d4d4;
@@ -169,6 +181,7 @@ body {
     flex: 1;
     position: relative;
     background: #1e1e1e;
+    overflow: hidden;
 }
 
 #canvas {
@@ -189,6 +202,7 @@ body {
 .info-panel {
     position: absolute;
     bottom: 10px;
+    left: auto;
     right: 10px;
     background: rgba(45, 45, 48, 0.9);
     padding: 8px 12px;
@@ -197,6 +211,10 @@ body {
     display: flex;
     gap: 15px;
     border: 1px solid #3e3e42;
+    z-index: 10;
+    pointer-events: none;
+    max-width: calc(100% - 20px);
+    box-sizing: border-box;
 }
 
 /* Scrollbar Styling */
@@ -215,4 +233,94 @@ body {
 
 .palette::-webkit-scrollbar-thumb:hover {
     background: #4e4e52;
+}
+
+/* Modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: #2d2d30;
+    border: 1px solid #3e3e42;
+    border-radius: 6px;
+    min-width: 400px;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #4ec9b0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-body p {
+    margin: 0 0 15px 0;
+    color: #d4d4d4;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 8px 12px;
+    background: #1e1e1e;
+    border: 1px solid #3e3e42;
+    border-radius: 3px;
+    color: #d4d4d4;
+    font-size: 14px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    outline: none;
+}
+
+.modal-input:focus {
+    border-color: #569cd6;
+}
+
+.modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid #3e3e42;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.modal-footer .btn {
+    min-width: 80px;
 }

@@ -1,0 +1,22 @@
+{
+  "id": "LED",
+  "name": "LED",
+  "category": "Input/Output",
+  "description": "Visual indicator that lights up when active",
+  "pins": {
+    "inputs": [
+      { "x": -15, "y": 0 }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "code": ""
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "circle",
+    "width": 30,
+    "height": 30,
+    "label": "LED"
+  }
+}

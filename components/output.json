@@ -1,0 +1,22 @@
+{
+  "id": "OUTPUT",
+  "name": "Output Pin",
+  "category": "Input/Output",
+  "description": "Displays output signal state",
+  "pins": {
+    "inputs": [
+      { "x": -15, "y": 0 }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "code": ""
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rect",
+    "width": 30,
+    "height": 30,
+    "label": "OUT"
+  }
+}

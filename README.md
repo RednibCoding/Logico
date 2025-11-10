@@ -75,43 +75,108 @@ Logico/
 ├── index.html              # Main HTML file
 ├── styles.css              # Dark theme styling
 ├── main.js                 # Entry point
+├── components/             # Component definitions (individual JSON files)
+│   ├── and.json
+│   ├── or.json
+│   ├── not.json
+│   ├── xor.json
+│   ├── nand.json
+│   ├── nor.json
+│   ├── buffer.json
+│   ├── input.json
+│   ├── output.json
+│   ├── clock.json
+│   ├── led.json
+│   └── d-flip-flop.json
+├── ADDING_COMPONENTS.md    # Guide for adding new components
+├── LICENSE.md              # MIT License
 ├── src/
 │   ├── core/
 │   │   ├── Pin.js          # Pin class (connection points)
 │   │   ├── Component.js    # Base component class
 │   │   ├── Wire.js         # Wire class (connections)
 │   │   └── Circuit.js      # Circuit management
-│   ├── components/
-│   │   ├── LogicGates.js   # Gate implementations (AND, OR, NOT, XOR, NAND, NOR)
-│   │   ├── InputOutput.js  # I/O components (Input, Output, Clock, LED)
-│   │   └── Subcircuit.js   # Subcircuit component wrapper
+│   ├── circuit/
+│   │   ├── GenericComponent.js  # Data-driven component (loads from JSON)
+│   │   ├── ComponentRegistry.js # Component management and JSON loading
+│   │   └── Subcircuit.js        # Subcircuit component wrapper
 │   ├── engine/
 │   │   └── Simulator.js    # Simulation engine with topological sort
 │   ├── renderer/
 │   │   └── Renderer.js     # Canvas rendering with zoom/pan
 │   ├── ui/
-│   │   └── InteractionManager.js  # User interaction and clipboard
+│   │   ├── InteractionManager.js  # User interaction and clipboard
+│   │   └── Modal.js        # Modal dialogs (alerts, prompts, confirmations)
 │   └── app/
 │       └── App.js          # Main application logic
 ```
 
 ## Architecture
 
+### Data-Driven Design
+
+Logico uses a **fully data-driven architecture** where components are defined in individual JSON files in the `components/` folder rather than hardcoded in JavaScript. This means:
+
+- **No code changes needed** to add new components - just create a new JSON file
+- **Logic defined as code blocks** in JSON - arbitrary JavaScript executed at runtime
+- **State management** built-in - components can have persistent state objects
+- **Event handlers** - onClick, update, init code blocks for interactivity
+- **Predefined shapes** - AND, OR, XOR, NAND, NOR gate shapes plus circle, rect, rounded-rect, triangle
+
 ### Core Classes
 
+- **GenericComponent**: Dynamic component class that loads behavior from JSON definitions
+- **ComponentRegistry**: Loads and manages components from individual JSON files in `components/` folder
 - **Pin**: Represents connection points on components (inputs are squares, outputs are circles)
 - **Component**: Base class for all circuit components with serialization support
 - **Wire**: Connects two pins and transmits logical values
 - **Circuit**: Manages components and wires in a workspace
 
+### Component Definitions (components/*.json)
+
+Each component is defined in its own JSON file in the `components/` folder. Components are defined with:
+- **pins**: Input/output pin positions (relative to component)
+- **logic.code**: JavaScript code for evaluation (has access to inputs, outputs, state)
+- **logic.state**: Persistent state object (for interactive/stateful components)
+- **logic.onClick**: Click handler code (for buttons, switches)
+- **logic.update**: Per-frame update code (for clocks, animations)
+- **rendering.shape**: Predefined shape (and, or, xor, nand, nor, rounded-rect, triangle, rect, circle)
+- **rendering.width/height**: Component dimensions
+
+Example from `components/and.json`:
+```json
+{
+  "id": "AND",
+  "name": "AND Gate",
+  "category": "Logic Gates",
+  "description": "Outputs true only when all inputs are true",
+  "pins": {
+    "inputs": [{"x": -30, "y": -10}, {"x": -30, "y": 10}],
+    "outputs": [{"x": 30, "y": 0}]
+  },
+  "logic": {
+    "code": "const result = inputs.every(pin => pin.getValue());\noutputs[0].setValue(result);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "and",
+    "width": 60,
+    "height": 40,
+    "label": "&"
+  }
+}
+```
+
 ### Component Types
 
-- **Logic Gates**: AND, OR, NOT, XOR, NAND, NOR
-- **Input Pin**: User-controllable input (double-click to toggle)
-- **Output Pin**: Displays output value
-- **Clock**: Generates periodic signals (double-click to toggle)
-- **LED**: Visual indicator that lights up when receiving true signal
-- **Subcircuit**: Reusable circuit component with internal logic
+All components are loaded from individual JSON files in `components/`:
+- **Logic Gates**: AND, OR, NOT, XOR, NAND, NOR, Buffer (traditional gate shapes)
+- **Input Pin**: User-controllable input with onClick handler (`input.json`)
+- **Output Pin**: Displays output value (`output.json`)
+- **Clock**: Generates periodic signals using update handler (`clock.json`)
+- **LED**: Visual indicator (`led.json`)
+- **D Flip-Flop**: Sequential logic with state (`d-flip-flop.json`)
+- **Subcircuit**: Reusable circuit component (still uses custom class)
 
 ### Simulation
 
@@ -149,32 +214,55 @@ This is a pure vanilla JavaScript project with no build system required. Simply 
 
 ### Adding New Components
 
-1. Create a new class extending `Component` in the appropriate file
-2. Implement `setupPins()` to define input/output pins
-3. Implement `evaluate()` to define component logic
-4. Add rendering logic in `Renderer.js` (create a `drawYourComponent` method)
-5. Add to component factory in `InteractionManager.addComponent()`
-6. Optionally add to the palette in `index.html`
+**The easy way (no coding!):**
+1. Create a new JSON file in `components/` folder (e.g., `my-component.json`)
+2. Define your component with pins, logic code, and rendering
+3. Refresh browser - component appears automatically!
+
+See `ADDING_COMPONENTS.md` for detailed documentation.
+
+**Available logic code features:**
+- Access to `inputs` (array of input pins)
+- Access to `outputs` (array of output pins)
+- Access to `state` (persistent object)
+- `timestamp` available in update code
+- Call `inputs[i].getValue()` and `outputs[i].setValue(value)`
+
+**Predefined shapes:**
+- `"and"` - Traditional AND gate
+- `"or"` - Traditional OR gate
+- `"xor"` - XOR gate with extra arc
+- `"nand"` - AND with inversion bubble
+- `"nor"` - OR with inversion bubble
+- `"rounded-rect"` - Rounded rectangle
+- `"triangle"` - Triangle (for buffers/NOT)
+- `"rect"` - Plain rectangle
+- `"circle"` - Circle (for inputs/LEDs)
+
+**When you need JavaScript:**
+Only for custom rendering or extremely complex logic. 99% of components can be pure JSON!
 
 ### Code Style
 
 - Uses ES6 classes and modules (via script tags)
 - Dark VS Code-inspired theme
+- **Data-driven architecture** - components defined in JSON
 - Component-based architecture
 - Event-driven interaction system
+- No build tools required - pure vanilla JavaScript
 
 ## Future Enhancements
 
 - Multi-bit wires (buses)
-- More components (flip-flops, registers, multiplexers, RAM, ROM, etc.)
+- More components via JSON (multiplexers, decoders, encoders, adders, etc.)
+- Additional flip-flops (JK, T, SR) - all definable in JSON
 - Timing diagrams and waveform viewer
-- Component properties panel
+- Component properties panel (edit state, period, etc.)
 - Undo/Redo system
 - Wire routing improvements (auto-routing)
-- Component labels and annotations
-- Custom component creation UI
 - Testing and validation tools
 - Performance optimizations for large circuits
+- Export circuits as images
 
 ## License
 

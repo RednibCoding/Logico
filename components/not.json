@@ -1,0 +1,24 @@
+{
+  "id": "NOT",
+  "name": "NOT Gate",
+  "category": "Logic Gates",
+  "description": "Inverts the input signal",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0 }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0 }
+    ]
+  },
+  "logic": {
+    "code": "const result = !inputs[0].getValue();\noutputs[0].setValue(result);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "triangle",
+    "width": 50,
+    "height": 30,
+    "label": "NOT"
+  }
+}

@@ -16,8 +16,22 @@ class App {
             this // Pass app reference
         );
 
+        // Initialize asynchronously
+        this.init();
+    }
+
+    async init() {
+        // Initialize component registry from JSON
+        this.componentRegistry = new ComponentRegistry();
+        await this.componentRegistry.init();
+        
+        // Initialize modal
+        this.modal = new Modal();
+        
         this.setupUI();
+        this.buildPalette(); // Build palette from registry
         this.updateSimulationUI(false); // Initialize UI state
+        this.updateCircuitButtons(); // Initialize circuit button states
         this.startRenderLoop();
         
         // Handle window resize
@@ -26,6 +40,7 @@ class App {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 this.renderer.resize();
+                this.render();
             }, 100);
         });
         
@@ -33,6 +48,7 @@ class App {
         if (window.ResizeObserver) {
             const resizeObserver = new ResizeObserver(() => {
                 this.renderer.resize();
+                this.render();
             });
             resizeObserver.observe(this.canvas.parentElement);
         }
@@ -42,50 +58,58 @@ class App {
         return this.circuits.get(this.currentCircuitName);
     }
 
+    // Build component palette from registry
+    buildPalette() {
+        const paletteContent = document.getElementById('palette-content');
+        paletteContent.innerHTML = '';
+
+        // Get all categories (Subcircuits now appear in dropdown only)
+        const categories = this.componentRegistry.getAllCategories().filter(cat => cat !== 'Subcircuits');
+        
+        categories.forEach(categoryName => {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.className = 'palette-category';
+            
+            const header = document.createElement('h4');
+            header.textContent = categoryName;
+            categoryDiv.appendChild(header);
+            
+            const components = this.componentRegistry.getCategory(categoryName);
+            components.forEach(comp => {
+                const item = document.createElement('div');
+                item.className = 'component-item';
+                item.setAttribute('data-type', comp.id);
+                item.setAttribute('draggable', 'true');
+                item.setAttribute('title', comp.description);
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = comp.name;
+                nameSpan.style.cssText = 'flex: 1;';
+                item.appendChild(nameSpan);
+                
+                // Add drag event
+                item.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('componentType', comp.id);
+                });
+                
+                categoryDiv.appendChild(item);
+            });
+            
+            paletteContent.appendChild(categoryDiv);
+        });
+    }
+
     // Component factory for deserialization
     createComponent(type, x, y, circuitName = null) {
-        let component = null;
-
         // Check if it's a subcircuit
         if (type.startsWith('SUBCIRCUIT_')) {
             const subcircuitName = circuitName || type.substring('SUBCIRCUIT_'.length);
             const circuitInstance = this.circuits.get(subcircuitName);
-            component = new SubcircuitComponent(x, y, subcircuitName, circuitInstance);
-        } else {
-            switch (type) {
-                case 'AND':
-                    component = new ANDGate(x, y);
-                    break;
-                case 'OR':
-                    component = new ORGate(x, y);
-                    break;
-                case 'NOT':
-                    component = new NOTGate(x, y);
-                    break;
-                case 'XOR':
-                    component = new XORGate(x, y);
-                    break;
-                case 'NAND':
-                    component = new NANDGate(x, y);
-                    break;
-                case 'NOR':
-                    component = new NORGate(x, y);
-                    break;
-                case 'INPUT':
-                    component = new InputPin(x, y);
-                    break;
-                case 'OUTPUT':
-                    component = new OutputPin(x, y);
-                    break;
-                case 'CLOCK':
-                    component = new Clock(x, y);
-                    break;
-                case 'LED':
-                    component = new LED(x, y);
-                    break;
-            }
+            return new SubcircuitComponent(x, y, subcircuitName, circuitInstance);
         }
-
+        
+        // Use registry to create component
+        const component = this.componentRegistry.create(type, x, y);
         return component;
     }
 
@@ -106,13 +130,10 @@ class App {
             this.updateSimulationUI(false);
         });
 
-        // Clear button
-        document.getElementById('btn-clear').addEventListener('click', () => {
-            if (confirm('Clear the entire circuit?')) {
-                this.getCurrentCircuit().clear();
-                this.simulator.reset();
-                this.updateStatus('Cleared');
-                this.updateSimulationUI(false);
+                // Clear button
+        document.getElementById('btn-clear').addEventListener('click', async () => {
+            if (await this.modal.showConfirm('Clear the entire circuit?', 'Clear Circuit')) {
+                this.clearCircuit();
             }
         });
 
@@ -132,11 +153,21 @@ class App {
         });
 
         // New circuit button
-        document.getElementById('btn-new-circuit').addEventListener('click', () => {
-            const name = prompt('Enter circuit name:');
+        document.getElementById('btn-new-circuit').addEventListener('click', async () => {
+            const name = await this.modal.showPrompt('Enter circuit name:', 'New Circuit');
             if (name && !this.circuits.has(name)) {
                 this.createNewCircuit(name);
             }
+        });
+
+        // Export circuit button
+        document.getElementById('btn-export-circuit').addEventListener('click', () => {
+            this.exportCurrentCircuit();
+        });
+
+        // Delete circuit button
+        document.getElementById('btn-delete-circuit').addEventListener('click', () => {
+            this.deleteCurrentCircuit();
         });
 
         // Circuit selector
@@ -149,16 +180,7 @@ class App {
     }
 
     setupPaletteDragDrop() {
-        const componentItems = document.querySelectorAll('.component-item');
-        
-        componentItems.forEach(item => {
-            item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('componentType', item.dataset.type);
-            });
-            
-            item.setAttribute('draggable', 'true');
-        });
-
+        // Canvas drop handling
         this.canvas.addEventListener('dragover', (e) => {
             e.preventDefault();
         });
@@ -189,60 +211,12 @@ class App {
         // Always make it a subcircuit (except for main)
         if (name !== 'main') {
             circuit.isSubcircuit = true;
-            this.addSubcircuitToPanel(name);
+            this.componentRegistry.registerSubcircuit(name, circuit);
         }
         
         // Switch to new circuit
         selector.value = name;
         this.switchCircuit(name);
-    }
-
-    addSubcircuitToPanel(name) {
-        const subcircuitsList = document.getElementById('subcircuits-list');
-        const item = document.createElement('div');
-        item.className = 'component-item';
-        item.setAttribute('data-type', 'SUBCIRCUIT_' + name);
-        item.setAttribute('draggable', 'true');
-        
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = name;
-        nameSpan.style.cssText = 'flex: 1;';
-        item.appendChild(nameSpan);
-        
-        // Add buttons container
-        const buttonsDiv = document.createElement('div');
-        buttonsDiv.className = 'subcircuit-buttons';
-        
-        // Export button
-        const exportBtn = document.createElement('button');
-        exportBtn.textContent = '↓';
-        exportBtn.title = 'Export subcircuit';
-        exportBtn.className = 'subcircuit-btn';
-        exportBtn.onclick = (e) => {
-            e.stopPropagation();
-            this.exportSubcircuit(name);
-        };
-        
-        // Delete button
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = '×';
-        deleteBtn.title = 'Delete subcircuit';
-        deleteBtn.className = 'subcircuit-btn subcircuit-btn-delete';
-        deleteBtn.onclick = (e) => {
-            e.stopPropagation();
-            this.deleteSubcircuit(name);
-        };
-        
-        buttonsDiv.appendChild(exportBtn);
-        buttonsDiv.appendChild(deleteBtn);
-        item.appendChild(buttonsDiv);
-        
-        // Add drag event
-        item.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('componentType', 'SUBCIRCUIT_' + name);
-        });
-        
-        subcircuitsList.appendChild(item);
     }
 
     switchCircuit(name) {
@@ -265,7 +239,44 @@ class App {
             selector.value = name;
         }
         
+        // Update button states
+        this.updateCircuitButtons();
+        
         this.updateStatus(`Switched to: ${name}`);
+    }
+
+    updateCircuitButtons() {
+        const isMainCircuit = this.currentCircuitName === 'main';
+        const exportBtn = document.getElementById('btn-export-circuit');
+        const deleteBtn = document.getElementById('btn-delete-circuit');
+        
+        // Disable export/delete for main circuit
+        if (exportBtn) {
+            exportBtn.disabled = isMainCircuit;
+            exportBtn.style.opacity = isMainCircuit ? '0.5' : '1';
+            exportBtn.style.cursor = isMainCircuit ? 'not-allowed' : 'pointer';
+        }
+        if (deleteBtn) {
+            deleteBtn.disabled = isMainCircuit;
+            deleteBtn.style.opacity = isMainCircuit ? '0.5' : '1';
+            deleteBtn.style.cursor = isMainCircuit ? 'not-allowed' : 'pointer';
+        }
+    }
+
+    async exportCurrentCircuit() {
+        if (this.currentCircuitName === 'main') {
+            await this.modal.showAlert('Cannot export the main circuit. Use "Save" to save the entire project.', 'Cannot Export');
+            return;
+        }
+        this.exportSubcircuit(this.currentCircuitName);
+    }
+
+    async deleteCurrentCircuit() {
+        if (this.currentCircuitName === 'main') {
+            await this.modal.showAlert('Cannot delete the main circuit.', 'Cannot Delete');
+            return;
+        }
+        this.deleteSubcircuit(this.currentCircuitName);
     }
 
     updateStatus(message) {
@@ -377,15 +388,17 @@ class App {
             data.circuits.forEach(circuitData => {
                 const circuit = new Circuit(circuitData.name);
                 circuit.isSubcircuit = circuitData.isSubcircuit || false;
-                circuit.deserialize(circuitData.data, this.circuits);
+                circuit.deserialize(circuitData.data, this.circuits, this.createComponent.bind(this));
                 this.circuits.set(circuitData.name, circuit);
+                
+                // Register subcircuits in component registry
+                if (circuit.isSubcircuit) {
+                    this.componentRegistry.registerSubcircuit(circuitData.name, circuit);
+                }
             });
 
             // Update circuit selector
             this.updateCircuitSelector();
-
-            // Update subcircuit palette
-            this.updateSubcircuitPalette();
 
             // Switch to saved current circuit or main
             const targetCircuit = data.currentCircuit || 'main';
@@ -457,15 +470,17 @@ class App {
                     data.circuits.forEach(circuitData => {
                         const circuit = new Circuit(circuitData.name);
                         circuit.isSubcircuit = circuitData.isSubcircuit || false;
-                        circuit.deserialize(circuitData.data, this.circuits);
+                        circuit.deserialize(circuitData.data, this.circuits, this.createComponent.bind(this));
                         this.circuits.set(circuitData.name, circuit);
+                        
+                        // Register subcircuits in component registry
+                        if (circuit.isSubcircuit) {
+                            this.componentRegistry.registerSubcircuit(circuitData.name, circuit);
+                        }
                     });
 
                     // Update circuit selector
                     this.updateCircuitSelector();
-
-                    // Update subcircuit palette
-                    this.updateSubcircuitPalette();
 
                     // Switch to saved current circuit or main
                     const targetCircuit = data.currentCircuit || 'main';
@@ -507,24 +522,13 @@ class App {
         selector.value = this.currentCircuitName;
     }
 
-    updateSubcircuitPalette() {
-        const subcircuitsList = document.getElementById('subcircuits-list');
-        subcircuitsList.innerHTML = '';
-        
-        this.circuits.forEach((circuit, name) => {
-            if (circuit.isSubcircuit) {
-                this.addSubcircuitToPanel(name);
-            }
-        });
-    }
-
     // Delete a subcircuit
-    deleteSubcircuit(name) {
+    async deleteSubcircuit(name) {
         if (!this.circuits.has(name)) return;
         
         const circuit = this.circuits.get(name);
         if (!circuit.isSubcircuit) {
-            alert('Cannot delete: This is not a subcircuit.');
+            await this.modal.showAlert('Cannot delete: This is not a subcircuit.', 'Cannot Delete');
             return;
         }
         
@@ -542,22 +546,22 @@ class App {
         });
         
         if (isUsed) {
-            alert(`Cannot delete subcircuit "${name}" because it is being used in other circuits.`);
+            await this.modal.showAlert(`Cannot delete subcircuit "${name}" because it is being used in other circuits.`, 'Cannot Delete');
             return;
         }
         
-        if (!confirm(`Delete subcircuit "${name}"?`)) {
+        if (!await this.modal.showConfirm(`Delete subcircuit "${name}"?`, 'Delete Subcircuit')) {
             return;
         }
         
         // Remove from circuits
         this.circuits.delete(name);
         
+        // Unregister from component registry
+        this.componentRegistry.unregister('SUBCIRCUIT_' + name);
+        
         // Update circuit selector
         this.updateCircuitSelector();
-        
-        // Update subcircuit palette
-        this.updateSubcircuitPalette();
         
         // If we're currently viewing the deleted circuit, switch to main
         if (this.currentCircuitName === name) {
@@ -579,7 +583,7 @@ class App {
         try {
             const circuit = this.circuits.get(name);
             if (!circuit || !circuit.isSubcircuit) {
-                alert('This circuit is not a subcircuit.');
+                await this.modal.showAlert('This circuit is not a subcircuit.', 'Cannot Export');
                 return;
             }
             
@@ -678,9 +682,9 @@ class App {
         }
     }
 
-    processImportedSubcircuit(data) {
+    async processImportedSubcircuit(data) {
         if (data.type !== 'subcircuit') {
-            alert('Invalid subcircuit file.');
+            await this.modal.showAlert('Invalid subcircuit file.', 'Import Error');
             return;
         }
         
@@ -688,7 +692,7 @@ class App {
         
         // Check if name already exists
         if (this.circuits.has(name)) {
-            const newName = prompt(`Subcircuit "${name}" already exists. Enter a new name:`, name + '_imported');
+            const newName = await this.modal.showPrompt(`Subcircuit "${name}" already exists. Enter a new name:`, 'Rename Subcircuit', name + '_imported');
             if (!newName) return;
             name = newName;
         }
@@ -696,9 +700,12 @@ class App {
         // Create the circuit
         const circuit = new Circuit(name);
         circuit.isSubcircuit = true;
-        circuit.deserialize(data.circuit, this.circuits);
+        circuit.deserialize(data.circuit, this.circuits, this.createComponent.bind(this));
         
         this.circuits.set(name, circuit);
+        
+        // Register in component registry
+        this.componentRegistry.registerSubcircuit(name, circuit);
         
         // Update UI
         this.updateCircuitSelector();
@@ -736,7 +743,7 @@ class App {
                 // TODO: Implement circuit deserialization
                 this.updateStatus('Circuit loaded');
             } catch (error) {
-                alert('Error loading file: ' + error.message);
+                this.modal.showAlert('Error loading file: ' + error.message, 'Load Error');
             }
         };
         reader.readAsText(file);
