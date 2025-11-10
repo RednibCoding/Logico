@@ -1,0 +1,22 @@
+{
+  "id": "VCC",
+  "name": "VCC/Power",
+  "category": "Input/Output",
+  "description": "Constant HIGH (logic 1) signal",
+  "pins": {
+    "inputs": [],
+    "outputs": [
+      { "x": 20, "y": 0, "label": "VCC" }
+    ]
+  },
+  "logic": {
+    "code": "outputs[0].setValue(true);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rect",
+    "width": 40,
+    "height": 40,
+    "customRender": "// Draw VCC symbol\nctx.strokeStyle = '#4ec9b0';\nctx.lineWidth = 2;\nctx.beginPath();\nctx.moveTo(x, y + 10);\nctx.lineTo(x, y - 5);\nctx.stroke();\n\nctx.fillStyle = '#4ec9b0';\nctx.beginPath();\nctx.arc(x, y - 8, 3, 0, Math.PI * 2);\nctx.fill();\n\nctx.fillStyle = colors.text;\nctx.font = '7px monospace';\nctx.textAlign = 'center';\nctx.fillText('VCC', x, y + 14);"
+  }
+}

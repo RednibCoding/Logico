@@ -1,0 +1,31 @@
+{
+  "id": "JK_FLIP_FLOP",
+  "name": "JK Flip-Flop",
+  "category": "Sequential",
+  "description": "JK flip-flop with rising edge trigger",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -15, "label": "J" },
+      { "x": -30, "y": 0, "label": "CLK" },
+      { "x": -30, "y": 15, "label": "K" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -7, "label": "Q" },
+      { "x": 30, "y": 7, "label": "Q̄" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "q": false,
+      "lastClock": false
+    },
+    "code": "const j = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nconst k = inputs[2].getValue();\nif (clock && !state.lastClock) {\n  if (j && k) {\n    state.q = !state.q;\n  } else if (j) {\n    state.q = true;\n  } else if (k) {\n    state.q = false;\n  }\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.q);\noutputs[1].setValue(!state.q);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 60,
+    "label": "JK-FF"
+  }
+}

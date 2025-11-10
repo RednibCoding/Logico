@@ -1,0 +1,26 @@
+{
+  "id": "MUX_2TO1",
+  "name": "2-to-1 Multiplexer",
+  "category": "Multiplexers",
+  "description": "Selects between two inputs based on select line",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -15, "label": "A" },
+      { "x": -30, "y": 15, "label": "B" },
+      { "x": 0, "y": 30, "label": "SEL" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "Y" }
+    ]
+  },
+  "logic": {
+    "code": "const a = inputs[0].getValue();\nconst b = inputs[1].getValue();\nconst sel = inputs[2].getValue();\noutputs[0].setValue(sel ? b : a);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 60,
+    "label": "MUX"
+  }
+}

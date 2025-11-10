@@ -1,0 +1,48 @@
+{
+  "id": "ADDER_8BIT",
+  "name": "8-Bit Adder",
+  "category": "Arithmetic",
+  "description": "8-bit ripple carry adder with carry in/out",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -40, "label": "A0" },
+      { "x": -40, "y": -30, "label": "A1" },
+      { "x": -40, "y": -20, "label": "A2" },
+      { "x": -40, "y": -10, "label": "A3" },
+      { "x": -40, "y": 0, "label": "A4" },
+      { "x": -40, "y": 10, "label": "A5" },
+      { "x": -40, "y": 20, "label": "A6" },
+      { "x": -40, "y": 30, "label": "A7" },
+      { "x": -20, "y": -40, "label": "B0" },
+      { "x": -20, "y": -30, "label": "B1" },
+      { "x": -20, "y": -20, "label": "B2" },
+      { "x": -20, "y": -10, "label": "B3" },
+      { "x": -20, "y": 0, "label": "B4" },
+      { "x": -20, "y": 10, "label": "B5" },
+      { "x": -20, "y": 20, "label": "B6" },
+      { "x": -20, "y": 30, "label": "B7" },
+      { "x": 0, "y": -50, "label": "Cin" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -40, "label": "S0" },
+      { "x": 40, "y": -30, "label": "S1" },
+      { "x": 40, "y": -20, "label": "S2" },
+      { "x": 40, "y": -10, "label": "S3" },
+      { "x": 40, "y": 0, "label": "S4" },
+      { "x": 40, "y": 10, "label": "S5" },
+      { "x": 40, "y": 20, "label": "S6" },
+      { "x": 40, "y": 30, "label": "S7" },
+      { "x": 0, "y": 50, "label": "Cout" }
+    ]
+  },
+  "logic": {
+    "code": "let carry = inputs[16].getValue();\nfor (let i = 0; i < 8; i++) {\n  const a = inputs[i].getValue();\n  const b = inputs[i + 8].getValue();\n  const sum = a !== b !== carry;\n  carry = (a && b) || (carry && (a !== b));\n  outputs[i].setValue(sum);\n}\noutputs[8].setValue(carry);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 110,
+    "label": "ADD8"
+  }
+}

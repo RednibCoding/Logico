@@ -1,0 +1,24 @@
+{
+  "id": "OPEN_COLLECTOR",
+  "name": "Open Collector Buffer",
+  "category": "Input/Output",
+  "description": "Open collector output buffer for wired-AND",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "OUT" }
+    ]
+  },
+  "logic": {
+    "code": "outputs[0].setValue(inputs[0].getValue());"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 40,
+    "label": "OC"
+  }
+}

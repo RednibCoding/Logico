@@ -1,0 +1,37 @@
+{
+  "id": "COUNTER_8BIT",
+  "name": "8-Bit Counter",
+  "category": "Sequential",
+  "description": "8-bit binary counter with clock, reset, and enable",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -15, "label": "CLK" },
+      { "x": -35, "y": 0, "label": "RST" },
+      { "x": -35, "y": 15, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -35, "label": "Q0" },
+      { "x": 35, "y": -25, "label": "Q1" },
+      { "x": 35, "y": -15, "label": "Q2" },
+      { "x": 35, "y": -5, "label": "Q3" },
+      { "x": 35, "y": 5, "label": "Q4" },
+      { "x": 35, "y": 15, "label": "Q5" },
+      { "x": 35, "y": 25, "label": "Q6" },
+      { "x": 35, "y": 35, "label": "Q7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "count": 0,
+      "lastClock": false
+    },
+    "code": "const clock = inputs[0].getValue();\nconst reset = inputs[1].getValue();\nconst enable = inputs[2].getValue();\nif (reset) {\n  state.count = 0;\n} else if (clock && !state.lastClock && enable) {\n  state.count = (state.count + 1) % 256;\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 90,
+    "label": "CNT8"
+  }
+}

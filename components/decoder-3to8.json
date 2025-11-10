@@ -1,0 +1,33 @@
+{
+  "id": "DECODER_3TO8",
+  "name": "3-to-8 Decoder",
+  "category": "Decoders",
+  "description": "Decodes 3-bit input to 8 output lines (one-hot)",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -15, "label": "A0" },
+      { "x": -35, "y": 0, "label": "A1" },
+      { "x": -35, "y": 15, "label": "A2" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -30, "label": "Y0" },
+      { "x": 35, "y": -20, "label": "Y1" },
+      { "x": 35, "y": -10, "label": "Y2" },
+      { "x": 35, "y": 0, "label": "Y3" },
+      { "x": 35, "y": 10, "label": "Y4" },
+      { "x": 35, "y": 20, "label": "Y5" },
+      { "x": 35, "y": 30, "label": "Y6" },
+      { "x": 35, "y": 40, "label": "Y7" }
+    ]
+  },
+  "logic": {
+    "code": "const a0 = inputs[0].getValue();\nconst a1 = inputs[1].getValue();\nconst a2 = inputs[2].getValue();\nconst index = (a2 ? 4 : 0) + (a1 ? 2 : 0) + (a0 ? 1 : 0);\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue(i === index);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 100,
+    "label": "DEC"
+  }
+}

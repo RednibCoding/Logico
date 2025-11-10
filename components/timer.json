@@ -1,0 +1,42 @@
+{
+  "id": "TIMER",
+  "name": "Timer/Counter",
+  "category": "Sequential",
+  "description": "Programmable timer with output on timeout",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -15, "label": "CLK" },
+      { "x": -35, "y": 0, "label": "RST" },
+      { "x": -35, "y": 15, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -10, "label": "OUT" },
+      { "x": 35, "y": 10, "label": "DONE" }
+    ]
+  },
+  "properties": {
+    "timeout": {
+      "type": "number",
+      "label": "Timeout",
+      "unit": "cycles",
+      "default": 100,
+      "min": 1,
+      "max": 10000
+    }
+  },
+  "logic": {
+    "state": {
+      "count": 0,
+      "lastClk": false,
+      "timeout": 100
+    },
+    "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nconst en = inputs[2].getValue();\nif (rst) {\n  state.count = 0;\n} else if (clk && !state.lastClk && en) {\n  if (state.count < state.timeout) {\n    state.count++;\n  }\n}\nstate.lastClk = clk;\nconst done = state.count >= state.timeout;\noutputs[0].setValue(state.count > 0 && !done);\noutputs[1].setValue(done);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 50,
+    "customRender": "// Draw box\nctx.fillStyle = colors.component;\nctx.strokeStyle = colors.wire;\nctx.lineWidth = 2;\nconst r = 5;\nctx.beginPath();\nctx.roundRect(x - width/2, y - height/2, width, height, r);\nctx.fill();\nctx.stroke();\n\n// Draw label and timeout\nctx.fillStyle = colors.text;\nctx.font = 'bold 9px monospace';\nctx.textAlign = 'center';\nctx.fillText('TIMER', x, y - 4);\nctx.font = '7px monospace';\nctx.fillText(state.count + '/' + state.timeout, x, y + 6);"
+  }
+}

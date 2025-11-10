@@ -1,0 +1,41 @@
+{
+  "id": "I2C_MASTER",
+  "name": "I2C Master",
+  "category": "Input/Output",
+  "description": "I2C master with SDA, SCL, start, stop conditions",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -30, "label": "D0" },
+      { "x": -40, "y": -20, "label": "D1" },
+      { "x": -40, "y": -10, "label": "D2" },
+      { "x": -40, "y": 0, "label": "D3" },
+      { "x": -40, "y": 10, "label": "D4" },
+      { "x": -40, "y": 20, "label": "D5" },
+      { "x": -40, "y": 30, "label": "D6" },
+      { "x": -40, "y": 40, "label": "D7" },
+      { "x": 0, "y": 55, "label": "START" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -10, "label": "SDA" },
+      { "x": 40, "y": 5, "label": "SCL" },
+      { "x": 40, "y": 25, "label": "BUSY" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "data": 0,
+      "bitCount": 0,
+      "busy": false,
+      "sclState": true,
+      "lastStart": false
+    },
+    "code": "const start = inputs[8].getValue();\nif (start && !state.lastStart && !state.busy) {\n  state.data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[i].getValue()) state.data |= (1 << (7-i));\n  }\n  state.bitCount = 8;\n  state.busy = true;\n}\nstate.lastStart = start;\nif (state.busy && state.bitCount > 0) {\n  state.sclState = !state.sclState;\n  if (!state.sclState) {\n    state.data <<= 1;\n    state.bitCount--;\n    if (state.bitCount === 0) state.busy = false;\n  }\n}\noutputs[0].setValue((state.data & 0x80) !== 0);\noutputs[1].setValue(state.sclState);\noutputs[2].setValue(state.busy);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 100,
+    "label": "I2C-M"
+  }
+}

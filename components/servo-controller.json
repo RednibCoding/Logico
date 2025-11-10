@@ -1,0 +1,37 @@
+{
+  "id": "SERVO_CTRL",
+  "name": "Servo Controller",
+  "category": "Input/Output",
+  "description": "PWM servo motor controller with angle input",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -25, "label": "A0" },
+      { "x": -35, "y": -15, "label": "A1" },
+      { "x": -35, "y": -5, "label": "A2" },
+      { "x": -35, "y": 5, "label": "A3" },
+      { "x": -35, "y": 15, "label": "A4" },
+      { "x": -35, "y": 25, "label": "A5" },
+      { "x": -35, "y": 35, "label": "A6" },
+      { "x": -35, "y": 45, "label": "A7" },
+      { "x": 0, "y": 60, "label": "CLK" }
+    ],
+    "outputs": [
+      { "x": 35, "y": 0, "label": "PWM" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "angle": 0,
+      "counter": 0,
+      "lastClk": false
+    },
+    "code": "const clk = inputs[8].getValue();\nif (clk && !state.lastClk) {\n  state.counter = (state.counter + 1) % 200;\n  state.angle = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[i].getValue()) state.angle |= (1 << i);\n  }\n}\nstate.lastClk = clk;\nconst pulseWidth = 10 + (state.angle * 80 / 255);\noutputs[0].setValue(state.counter < pulseWidth);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 110,
+    "label": "SERVO"
+  }
+}

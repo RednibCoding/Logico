@@ -1,0 +1,29 @@
+{
+  "id": "HEX_DISPLAY",
+  "name": "Hex Display",
+  "category": "Display",
+  "description": "Displays 4-bit value as hexadecimal (0-F)",
+  "pins": {
+    "inputs": [
+      { "x": -25, "y": -15, "label": "D0" },
+      { "x": -25, "y": -5, "label": "D1" },
+      { "x": -25, "y": 5, "label": "D2" },
+      { "x": -25, "y": 15, "label": "D3" }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "state": {
+      "value": 0
+    },
+    "code": "state.value = (inputs[3].getValue() ? 8 : 0) + (inputs[2].getValue() ? 4 : 0) + (inputs[1].getValue() ? 2 : 0) + (inputs[0].getValue() ? 1 : 0);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 50,
+    "height": 50,
+    "label": "HEX",
+    "customRender": "// Draw hex value in the center\nconst hexChars = '0123456789ABCDEF';\nconst hexValue = hexChars[state.value];\nctx.fillStyle = '#4ec9b0';\nctx.font = 'bold 24px monospace';\nctx.textAlign = 'center';\nctx.textBaseline = 'middle';\nctx.fillText(hexValue, x, y);\n\n// Draw small label at top\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.fillText('HEX', x, y - height/2 + 10);"
+  }
+}

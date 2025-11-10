@@ -152,6 +152,11 @@ class Circuit {
                         // State is a primitive value
                         component.state = compData.state;
                     }
+                    
+                    // Re-run initialization code if component has it (for GenericComponent)
+                    if (typeof component.reinitialize === 'function') {
+                        component.reinitialize();
+                    }
                 }
                 
                 this.addComponent(component);
@@ -188,6 +193,23 @@ class Circuit {
             const component = componentFactory.create(compData.type, compData.x, compData.y);
             component.id = compData.id;
             component.label = compData.label;
+            
+            // Restore state for stateful components
+            if (compData.state !== undefined) {
+                if (typeof component.state === 'object' && component.state !== null) {
+                    // State is an object, merge properties
+                    Object.assign(component.state, compData.state);
+                } else {
+                    // State is a primitive value
+                    component.state = compData.state;
+                }
+                
+                // Re-run initialization code if component has it (for GenericComponent)
+                if (typeof component.reinitialize === 'function') {
+                    component.reinitialize();
+                }
+            }
+            
             circuit.addComponent(component);
             componentMap.set(component.id, component);
         });

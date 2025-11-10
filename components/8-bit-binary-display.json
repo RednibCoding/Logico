@@ -1,0 +1,32 @@
+{
+  "id": "BINARY_DISPLAY_8BIT",
+  "name": "8-Bit Binary Display",
+  "category": "Display",
+  "description": "Displays 8-bit value in binary with LEDs",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -30, "label": "D0" },
+      { "x": -35, "y": -20, "label": "D1" },
+      { "x": -35, "y": -10, "label": "D2" },
+      { "x": -35, "y": 0, "label": "D3" },
+      { "x": -35, "y": 10, "label": "D4" },
+      { "x": -35, "y": 20, "label": "D5" },
+      { "x": -35, "y": 30, "label": "D6" },
+      { "x": -35, "y": 40, "label": "D7" }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "state": {
+      "bits": [false, false, false, false, false, false, false, false]
+    },
+    "code": "for (let i = 0; i < 8; i++) {\n  state.bits[i] = inputs[i].getValue();\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 100,
+    "customRender": "// Draw 8 LED indicators INSIDE the rounded rectangle\nconst ledSize = 8;\nconst spacing = 10;\nconst startY = y - 35;\n\nfor (let i = 7; i >= 0; i--) {\n  const ledY = startY + (7 - i) * spacing;\n  const isOn = state.bits[i];\n  \n  // LED circle\n  ctx.fillStyle = isOn ? '#00ff00' : '#0a2a0a';\n  ctx.strokeStyle = isOn ? '#00aa00' : '#1a3a1a';\n  ctx.lineWidth = 1;\n  ctx.beginPath();\n  ctx.arc(x, ledY, ledSize/2, 0, Math.PI * 2);\n  ctx.fill();\n  ctx.stroke();\n  \n  // Bit label\n  ctx.fillStyle = colors.text;\n  ctx.font = '8px monospace';\n  ctx.textAlign = 'right';\n  ctx.fillText(i.toString(), x - 12, ledY + 3);\n}\n\n// Label at bottom\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.textAlign = 'center';\nctx.fillText('BIN', x, y + height/2 - 5);"
+  }
+}

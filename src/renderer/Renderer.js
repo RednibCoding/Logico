@@ -81,7 +81,7 @@ class Renderer {
         }
     }
 
-    render(circuit, tempWire = null, selectionBox = null) {
+    render(circuit, tempWire = null, selectionBox = null, hoveredComponent = null) {
         if (!circuit) return; // Guard against undefined circuit
         
         this.clear();
@@ -110,6 +110,11 @@ class Renderer {
         }
         
         this.ctx.restore();
+
+        // Draw tooltip (in screen space, after restoring transform)
+        if (hoveredComponent) {
+            this.drawTooltip(hoveredComponent);
+        }
     }
 
     drawComponent(component) {
@@ -419,25 +424,129 @@ class Renderer {
                 this.ctx.strokeRect(x - width/2, y - height/2, width, height);
         }
 
-        // Draw label
-        this.ctx.fillStyle = this.colors.text;
-        this.ctx.font = '10px monospace';
-        this.ctx.textAlign = 'center';
-        this.ctx.textBaseline = 'middle';
-        
-        // Adjust label position based on shape
-        let labelX = x;
-        if (renderDef.shape === 'and' || renderDef.shape === 'nand') {
-            labelX = x - width * 0.1; // Shift slightly left for AND shapes
-        } else if (renderDef.shape === 'or' || renderDef.shape === 'nor' || renderDef.shape === 'xor') {
-            labelX = x - width * 0.1; // Shift more left for OR shapes
-        } else if (renderDef.shape === 'triangle') {
-            labelX = x - width * 0.25; // Shift more left for triangle (NOT/BUFFER)
+        // Check if component has custom content rendering
+        if (renderDef.customRender) {
+            try {
+                // Execute custom render code for content INSIDE the shape
+                // Provide: ctx, x, y, width, height, selected, state, colors
+                const func = new Function(
+                    'ctx', 'x', 'y', 'width', 'height', 'selected', 'state', 'colors', 
+                    renderDef.customRender
+                );
+                func(
+                    this.ctx,
+                    x,
+                    y,
+                    width,
+                    height,
+                    selected,
+                    component.state,
+                    this.colors
+                );
+            } catch (error) {
+                console.error(`Error in custom render code for ${component.type}:`, error);
+                // Fall through to default label rendering on error
+            }
+        } else {
+            // Draw default label
+            this.ctx.fillStyle = this.colors.text;
+            this.ctx.font = '10px monospace';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            
+            // Adjust label position based on shape
+            let labelX = x;
+            if (renderDef.shape === 'and' || renderDef.shape === 'nand') {
+                labelX = x - width * 0.1; // Shift slightly left for AND shapes
+            } else if (renderDef.shape === 'or' || renderDef.shape === 'nor' || renderDef.shape === 'xor') {
+                labelX = x - width * 0.1; // Shift more left for OR shapes
+            } else if (renderDef.shape === 'triangle') {
+                labelX = x - width * 0.25; // Shift more left for triangle (NOT/BUFFER)
+            }
+            
+            this.ctx.fillText(label, labelX, y);
         }
-        
-        this.ctx.fillText(label, labelX, y);
 
         // Draw pins
         component.getAllPins().forEach(pin => this.drawPin(pin, selected));
+    }
+
+    drawTooltip(component) {
+        // Get component definition for description
+        let name = component.type;
+        let description = '';
+
+        if (component instanceof GenericComponent && component.definition) {
+            name = component.definition.name || component.type;
+            description = component.definition.description || '';
+        } else if (component.type === 'SUBCIRCUIT') {
+            name = component.circuitName;
+            description = 'Subcircuit component';
+        }
+
+        if (!description) return; // Don't show tooltip if no description
+
+        // Convert component position to screen space
+        const screenPos = this.worldToScreen(
+            component.x + component.width / 2,
+            component.y + component.height + 10
+        );
+
+        // Measure text
+        this.ctx.font = 'bold 12px sans-serif';
+        const nameWidth = this.ctx.measureText(name).width;
+        this.ctx.font = '11px sans-serif';
+        const descWidth = this.ctx.measureText(description).width;
+        const maxWidth = Math.max(nameWidth, descWidth);
+
+        const padding = 8;
+        const tooltipWidth = maxWidth + padding * 2;
+        const tooltipHeight = 40;
+
+        // Adjust position to keep tooltip on screen
+        let tooltipX = screenPos.x - tooltipWidth / 2;
+        let tooltipY = screenPos.y;
+
+        if (tooltipX < 10) tooltipX = 10;
+        if (tooltipX + tooltipWidth > this.width - 10) {
+            tooltipX = this.width - tooltipWidth - 10;
+        }
+        if (tooltipY + tooltipHeight > this.height - 10) {
+            tooltipY = screenPos.y - tooltipHeight - 20;
+        }
+
+        // Draw tooltip background with shadow
+        this.ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowOffsetX = 2;
+        this.ctx.shadowOffsetY = 2;
+
+        this.ctx.fillStyle = 'rgba(45, 45, 48, 0.95)';
+        this.ctx.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+
+        // Reset shadow
+        this.ctx.shadowColor = 'transparent';
+        this.ctx.shadowBlur = 0;
+        this.ctx.shadowOffsetX = 0;
+        this.ctx.shadowOffsetY = 0;
+
+        // Draw border
+        this.ctx.strokeStyle = '#569cd6';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight);
+
+        // Draw text
+        this.ctx.fillStyle = '#d4d4d4';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'top';
+
+        // Component name (bold)
+        this.ctx.font = 'bold 12px sans-serif';
+        this.ctx.fillText(name, tooltipX + padding, tooltipY + padding);
+
+        // Description
+        this.ctx.font = '11px sans-serif';
+        this.ctx.fillStyle = '#a0a0a0';
+        this.ctx.fillText(description, tooltipX + padding, tooltipY + padding + 18);
     }
 }

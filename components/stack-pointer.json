@@ -1,0 +1,38 @@
+{
+  "id": "STACK_POINTER",
+  "name": "Stack Pointer",
+  "category": "Sequential",
+  "description": "Stack pointer with push/pop, 8-bit counter",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -25, "label": "CLK" },
+      { "x": -35, "y": -10, "label": "PUSH" },
+      { "x": -35, "y": 5, "label": "POP" },
+      { "x": -35, "y": 20, "label": "RST" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -40, "label": "A0" },
+      { "x": 35, "y": -30, "label": "A1" },
+      { "x": 35, "y": -20, "label": "A2" },
+      { "x": 35, "y": -10, "label": "A3" },
+      { "x": 35, "y": 0, "label": "A4" },
+      { "x": 35, "y": 10, "label": "A5" },
+      { "x": 35, "y": 20, "label": "A6" },
+      { "x": 35, "y": 30, "label": "A7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "sp": 255,
+      "lastClock": false
+    },
+    "code": "const clock = inputs[0].getValue();\nconst push = inputs[1].getValue();\nconst pop = inputs[2].getValue();\nconst rst = inputs[3].getValue();\nif (rst) {\n  state.sp = 255;\n} else if (clock && !state.lastClock) {\n  if (push) {\n    state.sp = (state.sp - 1 + 256) % 256;\n  } else if (pop) {\n    state.sp = (state.sp + 1) % 256;\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.sp >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 90,
+    "label": "SP"
+  }
+}

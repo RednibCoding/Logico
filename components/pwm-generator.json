@@ -1,0 +1,32 @@
+{
+  "id": "PWM_GEN",
+  "name": "PWM Generator",
+  "category": "Sequential",
+  "description": "Pulse-width modulation generator with duty cycle control",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -20, "label": "CLK" },
+      { "x": -35, "y": -10, "label": "D0" },
+      { "x": -35, "y": 0, "label": "D1" },
+      { "x": -35, "y": 10, "label": "D2" },
+      { "x": -35, "y": 20, "label": "D3" }
+    ],
+    "outputs": [
+      { "x": 35, "y": 0, "label": "PWM" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "counter": 0,
+      "lastClk": false
+    },
+    "code": "const clk = inputs[0].getValue();\nif (clk && !state.lastClk) {\n  state.counter = (state.counter + 1) % 16;\n}\nstate.lastClk = clk;\nlet duty = 0;\nfor (let i = 0; i < 4; i++) {\n  if (inputs[i + 1].getValue()) duty |= (1 << i);\n}\noutputs[0].setValue(state.counter < duty);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 60,
+    "label": "PWM"
+  }
+}

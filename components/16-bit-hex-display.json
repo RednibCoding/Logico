@@ -1,0 +1,40 @@
+{
+  "id": "HEX_DISPLAY_16BIT",
+  "name": "16-Bit Hex Display",
+  "category": "Display",
+  "description": "Displays 16-bit value as 4 hex digits (0000-FFFF)",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -75, "label": "D0" },
+      { "x": -35, "y": -65, "label": "D1" },
+      { "x": -35, "y": -55, "label": "D2" },
+      { "x": -35, "y": -45, "label": "D3" },
+      { "x": -35, "y": -35, "label": "D4" },
+      { "x": -35, "y": -25, "label": "D5" },
+      { "x": -35, "y": -15, "label": "D6" },
+      { "x": -35, "y": -5, "label": "D7" },
+      { "x": -35, "y": 5, "label": "D8" },
+      { "x": -35, "y": 15, "label": "D9" },
+      { "x": -35, "y": 25, "label": "D10" },
+      { "x": -35, "y": 35, "label": "D11" },
+      { "x": -35, "y": 45, "label": "D12" },
+      { "x": -35, "y": 55, "label": "D13" },
+      { "x": -35, "y": 65, "label": "D14" },
+      { "x": -35, "y": 75, "label": "D15" }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "state": {
+      "value": 0
+    },
+    "code": "state.value = 0;\nfor (let i = 0; i < 16; i++) {\n  if (inputs[i].getValue()) state.value |= (1 << i);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 170,
+    "customRender": "// Draw 4 hex digits\nconst hexChars = '0123456789ABCDEF';\nconst hex = [\n  hexChars[(state.value >> 12) & 0xF],\n  hexChars[(state.value >> 8) & 0xF],\n  hexChars[(state.value >> 4) & 0xF],\n  hexChars[state.value & 0xF]\n];\nctx.fillStyle = '#4ec9b0';\nctx.font = 'bold 20px monospace';\nctx.textAlign = 'center';\nctx.textBaseline = 'middle';\nfor (let i = 0; i < 4; i++) {\n  ctx.fillText(hex[i], x - 15 + i * 10, y);\n}\n\n// Label at top\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.fillText('HEX16', x, y - height/2 + 10);\n\n// Show decimal value at bottom\nctx.font = '7px monospace';\nctx.fillText(state.value.toString(), x, y + height/2 - 10);"
+  }
+}

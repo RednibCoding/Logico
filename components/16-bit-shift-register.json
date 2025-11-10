@@ -1,0 +1,47 @@
+{
+  "id": "SHIFT_REGISTER_16BIT",
+  "name": "16-Bit Shift Register",
+  "category": "Sequential",
+  "description": "16-bit shift register with serial in, parallel out, shift left/right",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -50, "label": "SI" },
+      { "x": -40, "y": -30, "label": "CLK" },
+      { "x": -40, "y": -10, "label": "DIR" },
+      { "x": -40, "y": 10, "label": "RST" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -80, "label": "Q0" },
+      { "x": 40, "y": -70, "label": "Q1" },
+      { "x": 40, "y": -60, "label": "Q2" },
+      { "x": 40, "y": -50, "label": "Q3" },
+      { "x": 40, "y": -40, "label": "Q4" },
+      { "x": 40, "y": -30, "label": "Q5" },
+      { "x": 40, "y": -20, "label": "Q6" },
+      { "x": 40, "y": -10, "label": "Q7" },
+      { "x": 40, "y": 0, "label": "Q8" },
+      { "x": 40, "y": 10, "label": "Q9" },
+      { "x": 40, "y": 20, "label": "Q10" },
+      { "x": 40, "y": 30, "label": "Q11" },
+      { "x": 40, "y": 40, "label": "Q12" },
+      { "x": 40, "y": 50, "label": "Q13" },
+      { "x": 40, "y": 60, "label": "Q14" },
+      { "x": 40, "y": 70, "label": "Q15" },
+      { "x": 40, "y": 85, "label": "SO" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "data": 0,
+      "lastClock": false
+    },
+    "code": "const si = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nconst dir = inputs[2].getValue();\nconst rst = inputs[3].getValue();\nif (rst) {\n  state.data = 0;\n} else if (clock && !state.lastClock) {\n  if (dir) {\n    state.data = ((state.data << 1) | (si ? 1 : 0)) & 0xFFFF;\n  } else {\n    state.data = (state.data >> 1) | (si ? 0x8000 : 0);\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 16; i++) {\n  outputs[i].setValue((state.data >> i) & 1);\n}\noutputs[16].setValue((state.data >> (dir ? 15 : 0)) & 1);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 180,
+    "label": "SREG16"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "MAG_COMP_4BIT",
+  "name": "4-Bit Magnitude Comparator",
+  "category": "Arithmetic",
+  "description": "Compares two 4-bit numbers with cascade inputs",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -45, "label": "A0" },
+      { "x": -40, "y": -35, "label": "A1" },
+      { "x": -40, "y": -25, "label": "A2" },
+      { "x": -40, "y": -15, "label": "A3" },
+      { "x": -40, "y": 5, "label": "B0" },
+      { "x": -40, "y": 15, "label": "B1" },
+      { "x": -40, "y": 25, "label": "B2" },
+      { "x": -40, "y": 35, "label": "B3" },
+      { "x": 0, "y": 55, "label": "LT_IN" },
+      { "x": 15, "y": 55, "label": "EQ_IN" },
+      { "x": -15, "y": 55, "label": "GT_IN" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -10, "label": "LT" },
+      { "x": 40, "y": 0, "label": "EQ" },
+      { "x": 40, "y": 10, "label": "GT" }
+    ]
+  },
+  "logic": {
+    "code": "let a = 0, b = 0;\nfor (let i = 0; i < 4; i++) {\n  if (inputs[i].getValue()) a |= (1 << i);\n  if (inputs[i + 4].getValue()) b |= (1 << i);\n}\nconst ltIn = inputs[8].getValue();\nconst eqIn = inputs[9].getValue();\nconst gtIn = inputs[10].getValue();\nlet lt = false, eq = false, gt = false;\nif (a > b) {\n  gt = true;\n} else if (a < b) {\n  lt = true;\n} else {\n  lt = ltIn;\n  eq = eqIn;\n  gt = gtIn;\n}\noutputs[0].setValue(lt);\noutputs[1].setValue(eq);\noutputs[2].setValue(gt);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 120,
+    "label": "CMP4"
+  }
+}

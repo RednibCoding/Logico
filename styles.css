@@ -324,3 +324,152 @@ body {
 .modal-footer .btn {
     min-width: 80px;
 }
+
+/* Properties Panel */
+.properties-panel {
+    position: fixed;
+    right: 20px;
+    top: 80px;
+    width: 300px;
+    max-height: calc(100vh - 100px);
+    background: #252526;
+    border: 1px solid #3e3e42;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.properties-panel.hidden {
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+}
+
+.properties-header {
+    background: #2d2d30;
+    padding: 12px 15px;
+    border-bottom: 1px solid #3e3e42;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.properties-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #cccccc;
+    margin: 0;
+}
+
+.properties-header .close-btn {
+    background: none;
+    border: none;
+    color: #cccccc;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.properties-header .close-btn:hover {
+    color: #fff;
+}
+
+.properties-content {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.component-info {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.component-info strong {
+    display: block;
+    color: #4ec9b0;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.component-info p {
+    font-size: 12px;
+    color: #858585;
+    margin: 5px 0;
+}
+
+.no-selection,
+.no-properties {
+    text-align: center;
+    color: #858585;
+    font-size: 12px;
+    padding: 20px;
+}
+
+.properties-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.property-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.property-field label {
+    font-size: 12px;
+    color: #cccccc;
+    font-weight: 500;
+}
+
+.property-field input[type="text"],
+.property-field input[type="number"],
+.property-field select {
+    background: #3c3c3c;
+    border: 1px solid #3e3e42;
+    color: #cccccc;
+    padding: 6px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: 'Consolas', monospace;
+}
+
+.property-field input[type="text"]:focus,
+.property-field input[type="number"]:focus,
+.property-field select:focus {
+    outline: none;
+    border-color: #0e639c;
+}
+
+.property-field input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.memory-edit-btn {
+    background: #0e639c;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.memory-edit-btn:hover {
+    background: #1177bb;
+}

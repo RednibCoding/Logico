@@ -228,6 +228,67 @@ All shapes automatically change color based on component state:
 - INPUT and LED components (using circles) change color based on their internal state
 - No custom code needed for visual feedback!
 
+#### Custom Rendering (Advanced)
+
+For components that need special visual content (displays, gauges, complex visualizations), you can define custom rendering code for the **content inside the shape**. The basic shape (rounded-rect, circle, etc.) is still drawn automatically, and your custom code only controls what appears inside it.
+
+```json
+"rendering": {
+  "type": "gate",
+  "shape": "rounded-rect",
+  "width": 50,
+  "height": 50,
+  "customRender": "// Draw hex digit inside the rounded rectangle\nconst hexChars = '0123456789ABCDEF';\nconst hexValue = hexChars[state.value];\nctx.fillStyle = '#4ec9b0';\nctx.font = 'bold 24px monospace';\nctx.textAlign = 'center';\nctx.textBaseline = 'middle';\nctx.fillText(hexValue, x, y);\n\n// Small label at top\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.fillText('HEX', x, y - height/2 + 10);"
+}
+```
+
+**What gets drawn automatically:**
+- ✅ Component shape (rounded-rect, circle, triangle, etc.)
+- ✅ Border and fill colors (handles selection state)
+- ✅ Pins
+- ✅ Default label (if no customRender)
+
+**What customRender controls:**
+- 🎨 Content INSIDE the shape
+- 🎨 Custom text, graphics, visualizations
+- 🎨 Override the default label with custom content
+
+**Available in customRender code:**
+- `ctx` - Canvas 2D context (for drawing)
+- `x`, `y` - Component center position
+- `width`, `height` - Component dimensions  
+- `selected` - Boolean, whether component is selected
+- `state` - Component state object
+- `colors` - Color palette object with all theme colors
+
+**Common drawing operations:**
+```javascript
+// Rectangles
+ctx.fillRect(x - width/2, y - height/2, width, height);
+ctx.strokeRect(x - width/2, y - height/2, width, height);
+
+// Circles
+ctx.beginPath();
+ctx.arc(x, y, radius, 0, Math.PI * 2);
+ctx.fill();
+ctx.stroke();
+
+// Text
+ctx.fillStyle = '#4ec9b0';
+ctx.font = 'bold 24px monospace';
+ctx.textAlign = 'center';
+ctx.textBaseline = 'middle';
+ctx.fillText('Hello', x, y);
+
+// Paths
+ctx.beginPath();
+ctx.moveTo(x1, y1);
+ctx.lineTo(x2, y2);
+ctx.stroke();
+```
+
+See `components/hex-display.json` and `components/7-segment-display.json` for complete examples.
+
 ## Examples
 
 ### 4-Input AND Gate

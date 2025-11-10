@@ -1,0 +1,42 @@
+{
+  "id": "INSTRUCTION_DECODER",
+  "name": "Instruction Decoder",
+  "category": "Decoders",
+  "description": "Decodes 8-bit instruction into control signals",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -40, "label": "I0" },
+      { "x": -40, "y": -30, "label": "I1" },
+      { "x": -40, "y": -20, "label": "I2" },
+      { "x": -40, "y": -10, "label": "I3" },
+      { "x": -40, "y": 0, "label": "I4" },
+      { "x": -40, "y": 10, "label": "I5" },
+      { "x": -40, "y": 20, "label": "I6" },
+      { "x": -40, "y": 30, "label": "I7" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -55, "label": "LD" },
+      { "x": 40, "y": -45, "label": "ST" },
+      { "x": 40, "y": -35, "label": "ADD" },
+      { "x": 40, "y": -25, "label": "SUB" },
+      { "x": 40, "y": -15, "label": "AND" },
+      { "x": 40, "y": -5, "label": "OR" },
+      { "x": 40, "y": 5, "label": "XOR" },
+      { "x": 40, "y": 15, "label": "NOT" },
+      { "x": 40, "y": 25, "label": "JMP" },
+      { "x": 40, "y": 35, "label": "JZ" },
+      { "x": 40, "y": 45, "label": "JC" },
+      { "x": 40, "y": 55, "label": "HLT" }
+    ]
+  },
+  "logic": {
+    "code": "let opcode = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) opcode |= (1 << i);\n}\nfor (let i = 0; i < 12; i++) {\n  outputs[i].setValue(opcode === i);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 120,
+    "label": "DECODE"
+  }
+}

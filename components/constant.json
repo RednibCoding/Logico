@@ -1,0 +1,32 @@
+{
+  "id": "CONSTANT",
+  "name": "Constant Value",
+  "category": "Input/Output",
+  "description": "Outputs a constant HIGH or LOW signal",
+  "pins": {
+    "inputs": [],
+    "outputs": [
+      { "x": 25, "y": 0, "label": "OUT" }
+    ]
+  },
+  "properties": {
+    "value": {
+      "type": "boolean",
+      "label": "Value",
+      "default": true
+    }
+  },
+  "logic": {
+    "state": {
+      "value": true
+    },
+    "code": "outputs[0].setValue(state.value);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "circle",
+    "width": 50,
+    "height": 50,
+    "customRender": "ctx.fillStyle = state.value ? '#4ec9b0' : '#666';\nctx.font = 'bold 18px monospace';\nctx.textAlign = 'center';\nctx.textBaseline = 'middle';\nctx.fillText(state.value ? '1' : '0', x, y);"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "MONOSTABLE",
+  "name": "Monostable Multivibrator",
+  "category": "Sequential",
+  "description": "One-shot pulse generator, outputs pulse on trigger",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": 0, "label": "TRIG" }
+    ],
+    "outputs": [
+      { "x": 35, "y": 0, "label": "Q" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "counter": 0,
+      "lastTrigger": false
+    },
+    "code": "const trigger = inputs[0].getValue();\nif (trigger && !state.lastTrigger) {\n  state.counter = 10;\n}\nstate.lastTrigger = trigger;\nif (state.counter > 0) {\n  state.counter--;\n  outputs[0].setValue(true);\n} else {\n  outputs[0].setValue(false);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 40,
+    "label": "MONO"
+  }
+}

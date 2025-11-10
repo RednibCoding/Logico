@@ -1,0 +1,24 @@
+{
+  "id": "PULL_UP",
+  "name": "Pull-Up Resistor",
+  "category": "Input/Output",
+  "description": "Pull-up resistor, outputs HIGH when input is disconnected",
+  "pins": {
+    "inputs": [
+      { "x": -25, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 25, "y": 0, "label": "OUT" }
+    ]
+  },
+  "logic": {
+    "code": "outputs[0].setValue(inputs[0].getValue() || true);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rect",
+    "width": 50,
+    "height": 35,
+    "customRender": "// Draw resistor symbol\nctx.strokeStyle = colors.wire;\nctx.lineWidth = 2;\nctx.beginPath();\nconst zigzag = 4;\nconst spacing = 4;\nfor (let i = 0; i < 5; i++) {\n  ctx.lineTo(x - 10 + i * spacing, y + (i % 2 === 0 ? -zigzag : zigzag));\n}\nctx.stroke();\n\n// Draw up arrow\nctx.fillStyle = '#4ec9b0';\nctx.beginPath();\nctx.moveTo(x, y - 12);\nctx.lineTo(x - 4, y - 8);\nctx.lineTo(x + 4, y - 8);\nctx.fill();\n\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.textAlign = 'center';\nctx.fillText('R↑', x, y + height/2 - 3);"
+  }
+}

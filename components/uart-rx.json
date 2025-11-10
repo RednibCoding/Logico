@@ -1,0 +1,41 @@
+{
+  "id": "UART_RX",
+  "name": "UART Receiver",
+  "category": "Input/Output",
+  "description": "Serial UART receiver with data ready flag",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -10, "label": "RX" },
+      { "x": -40, "y": 5, "label": "CLK" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -40, "label": "D0" },
+      { "x": 40, "y": -30, "label": "D1" },
+      { "x": 40, "y": -20, "label": "D2" },
+      { "x": 40, "y": -10, "label": "D3" },
+      { "x": 40, "y": 0, "label": "D4" },
+      { "x": 40, "y": 10, "label": "D5" },
+      { "x": 40, "y": 20, "label": "D6" },
+      { "x": 40, "y": 30, "label": "D7" },
+      { "x": 40, "y": 45, "label": "RDY" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "shiftReg": 0,
+      "bitCount": 0,
+      "data": 0,
+      "ready": false,
+      "lastClk": false,
+      "lastRx": true
+    },
+    "code": "const rx = inputs[0].getValue();\nconst clk = inputs[1].getValue();\nif (!rx && state.lastRx && state.bitCount === 0) {\n  state.bitCount = 10;\n  state.shiftReg = 0;\n}\nstate.lastRx = rx;\nif (clk && !state.lastClk && state.bitCount > 0) {\n  state.shiftReg = (state.shiftReg >> 1) | (rx ? 0x200 : 0);\n  state.bitCount--;\n  if (state.bitCount === 0) {\n    state.data = (state.shiftReg >> 1) & 0xFF;\n    state.ready = true;\n  }\n}\nstate.lastClk = clk;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.data >> i) & 1);\n}\noutputs[8].setValue(state.ready);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 100,
+    "label": "UART-RX"
+  }
+}

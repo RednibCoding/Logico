@@ -1,0 +1,29 @@
+{
+  "id": "T_FLIP_FLOP",
+  "name": "T Flip-Flop",
+  "category": "Sequential",
+  "description": "Toggle flip-flop with rising edge trigger",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10, "label": "T" },
+      { "x": -30, "y": 10, "label": "CLK" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "Q" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "q": false,
+      "lastClock": false
+    },
+    "code": "const t = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nif (clock && !state.lastClock && t) {\n  state.q = !state.q;\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.q);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 50,
+    "label": "T-FF"
+  }
+}

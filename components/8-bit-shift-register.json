@@ -1,0 +1,46 @@
+{
+  "id": "SHIFT_REGISTER_8BIT",
+  "name": "8-Bit Shift Register",
+  "category": "Sequential",
+  "description": "8-bit shift register with left/right shift, parallel load",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -40, "label": "D0" },
+      { "x": -40, "y": -30, "label": "D1" },
+      { "x": -40, "y": -20, "label": "D2" },
+      { "x": -40, "y": -10, "label": "D3" },
+      { "x": -40, "y": 0, "label": "D4" },
+      { "x": -40, "y": 10, "label": "D5" },
+      { "x": -40, "y": 20, "label": "D6" },
+      { "x": -40, "y": 30, "label": "D7" },
+      { "x": 0, "y": 50, "label": "SI" },
+      { "x": 15, "y": 50, "label": "CLK" },
+      { "x": 30, "y": 50, "label": "LD" },
+      { "x": -15, "y": 50, "label": "DIR" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -40, "label": "Q0" },
+      { "x": 40, "y": -30, "label": "Q1" },
+      { "x": 40, "y": -20, "label": "Q2" },
+      { "x": 40, "y": -10, "label": "Q3" },
+      { "x": 40, "y": 0, "label": "Q4" },
+      { "x": 40, "y": 10, "label": "Q5" },
+      { "x": 40, "y": 20, "label": "Q6" },
+      { "x": 40, "y": 30, "label": "Q7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "value": 0,
+      "lastClock": false
+    },
+    "code": "const si = inputs[8].getValue();\nconst clock = inputs[9].getValue();\nconst load = inputs[10].getValue();\nconst dir = inputs[11].getValue();\nif (clock && !state.lastClock) {\n  if (load) {\n    state.value = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) state.value |= (1 << i);\n    }\n  } else {\n    if (dir) {\n      state.value = ((state.value << 1) | (si ? 1 : 0)) & 0xFF;\n    } else {\n      state.value = (state.value >> 1) | (si ? 0x80 : 0);\n    }\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.value >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 110,
+    "label": "SHIFT"
+  }
+}

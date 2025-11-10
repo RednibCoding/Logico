@@ -1,0 +1,34 @@
+{
+  "id": "SPLITTER_8BIT",
+  "name": "8-Bit Splitter",
+  "category": "Input/Output",
+  "description": "Splits one 8-bit bus into 8 individual signals",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0, "label": "BUS" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -35, "label": "B0" },
+      { "x": 30, "y": -25, "label": "B1" },
+      { "x": 30, "y": -15, "label": "B2" },
+      { "x": 30, "y": -5, "label": "B3" },
+      { "x": 30, "y": 5, "label": "B4" },
+      { "x": 30, "y": 15, "label": "B5" },
+      { "x": 30, "y": 25, "label": "B6" },
+      { "x": 30, "y": 35, "label": "B7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "value": 0
+    },
+    "code": "// For now, treat as pass-through that fans out to 8 bits\n// In future, this could interface with multi-bit wire system\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.value >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 80,
+    "label": "SPLIT"
+  }
+}

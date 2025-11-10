@@ -1,0 +1,28 @@
+{
+  "id": "TRISTATE_BUFFER",
+  "name": "Tri-State Buffer",
+  "category": "Logic Gates",
+  "description": "Buffer with enable - outputs input when enabled, high-Z when disabled",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10, "label": "IN" },
+      { "x": 0, "y": 20, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -10, "label": "OUT" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "enabled": false
+    },
+    "code": "const input = inputs[0].getValue();\nconst enable = inputs[1].getValue();\nstate.enabled = enable;\nif (enable) {\n  outputs[0].setValue(input);\n} else {\n  outputs[0].setValue(false);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "triangle",
+    "width": 60,
+    "height": 40,
+    "label": "TRI"
+  }
+}

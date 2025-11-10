@@ -1,0 +1,29 @@
+{
+  "id": "SEVEN_SEGMENT",
+  "name": "7-Segment Display",
+  "category": "Display",
+  "description": "7-segment display for BCD input (0-9)",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -15, "label": "A" },
+      { "x": -30, "y": -5, "label": "B" },
+      { "x": -30, "y": 5, "label": "C" },
+      { "x": -30, "y": 15, "label": "D" }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "state": {
+      "value": 0,
+      "segments": [false, false, false, false, false, false, false]
+    },
+    "code": "state.value = (inputs[3].getValue() ? 8 : 0) + (inputs[2].getValue() ? 4 : 0) + (inputs[1].getValue() ? 2 : 0) + (inputs[0].getValue() ? 1 : 0);\nconst patterns = [\n  [true, true, true, true, true, true, false],\n  [false, true, true, false, false, false, false],\n  [true, true, false, true, true, false, true],\n  [true, true, true, true, false, false, true],\n  [false, true, true, false, false, true, true],\n  [true, false, true, true, false, true, true],\n  [true, false, true, true, true, true, true],\n  [true, true, true, false, false, false, false],\n  [true, true, true, true, true, true, true],\n  [true, true, true, true, false, true, true]\n];\nif (state.value >= 0 && state.value <= 9) {\n  state.segments = patterns[state.value];\n} else {\n  state.segments = [false, false, false, false, false, false, false];\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 80,
+    "customRender": "// Draw 7-segment display INSIDE the rounded rectangle\nconst segW = 20;\nconst segH = 4;\nconst onColor = '#ff3333';\nconst offColor = '#2a0a0a';\n\n// Helper to draw horizontal segment\nfunction drawHSeg(sx, sy, active) {\n  ctx.fillStyle = active ? onColor : offColor;\n  ctx.fillRect(sx - segW/2, sy - segH/2, segW, segH);\n}\n\n// Helper to draw vertical segment\nfunction drawVSeg(sx, sy, active) {\n  ctx.fillStyle = active ? onColor : offColor;\n  ctx.fillRect(sx - segH/2, sy - segW/2, segH, segW);\n}\n\nconst segs = state.segments || [false, false, false, false, false, false, false];\n\n// Draw segments: a(top), b(top-right), c(bottom-right), d(bottom), e(bottom-left), f(top-left), g(middle)\ndrawHSeg(x, y - 20, segs[0]); // a\ndrawVSeg(x + 12, y - 10, segs[1]); // b\ndrawVSeg(x + 12, y + 10, segs[2]); // c\ndrawHSeg(x, y + 20, segs[3]); // d\ndrawVSeg(x - 12, y + 10, segs[4]); // e\ndrawVSeg(x - 12, y - 10, segs[5]); // f\ndrawHSeg(x, y, segs[6]); // g\n\n// Label at bottom\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.textAlign = 'center';\nctx.fillText('7-SEG', x, y + height/2 - 5);"
+  }
+}

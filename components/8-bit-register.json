@@ -1,0 +1,44 @@
+{
+  "id": "REGISTER_8BIT",
+  "name": "8-Bit Register",
+  "category": "Memory",
+  "description": "8-bit register with parallel load and clock",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -35, "label": "D0" },
+      { "x": -40, "y": -25, "label": "D1" },
+      { "x": -40, "y": -15, "label": "D2" },
+      { "x": -40, "y": -5, "label": "D3" },
+      { "x": -40, "y": 5, "label": "D4" },
+      { "x": -40, "y": 15, "label": "D5" },
+      { "x": -40, "y": 25, "label": "D6" },
+      { "x": -40, "y": 35, "label": "D7" },
+      { "x": 0, "y": 50, "label": "CLK" },
+      { "x": 20, "y": 50, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -35, "label": "Q0" },
+      { "x": 40, "y": -25, "label": "Q1" },
+      { "x": 40, "y": -15, "label": "Q2" },
+      { "x": 40, "y": -5, "label": "Q3" },
+      { "x": 40, "y": 5, "label": "Q4" },
+      { "x": 40, "y": 15, "label": "Q5" },
+      { "x": 40, "y": 25, "label": "Q6" },
+      { "x": 40, "y": 35, "label": "Q7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "value": 0,
+      "lastClock": false
+    },
+    "code": "const clock = inputs[8].getValue();\nconst enable = inputs[9].getValue();\nif (clock && !state.lastClock && enable) {\n  state.value = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[i].getValue()) {\n      state.value |= (1 << i);\n    }\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.value >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 100,
+    "label": "REG"
+  }
+}

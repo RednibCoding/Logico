@@ -1,0 +1,41 @@
+{
+  "id": "ROM_16BYTE",
+  "name": "16-Byte ROM",
+  "category": "Memory",
+  "description": "16-byte ROM with 4-bit address, 8-bit data output (click to program)",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -20, "label": "A0" },
+      { "x": -35, "y": -10, "label": "A1" },
+      { "x": -35, "y": 0, "label": "A2" },
+      { "x": -35, "y": 10, "label": "A3" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -35, "label": "D0" },
+      { "x": 35, "y": -25, "label": "D1" },
+      { "x": 35, "y": -15, "label": "D2" },
+      { "x": 35, "y": -5, "label": "D3" },
+      { "x": 35, "y": 5, "label": "D4" },
+      { "x": 35, "y": 15, "label": "D5" },
+      { "x": 35, "y": 25, "label": "D6" },
+      { "x": 35, "y": 35, "label": "D7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "memory": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      "programmingMode": false,
+      "currentAddress": 0
+    },
+    "init": "state.memory = [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F];",
+    "code": "const addr = (inputs[3].getValue() ? 8 : 0) + (inputs[2].getValue() ? 4 : 0) + (inputs[1].getValue() ? 2 : 0) + (inputs[0].getValue() ? 1 : 0);\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}",
+    "onClick": "state.currentAddress = (inputs[3].getValue() ? 8 : 0) + (inputs[2].getValue() ? 4 : 0) + (inputs[1].getValue() ? 2 : 0) + (inputs[0].getValue() ? 1 : 0);\nstate.programmingMode = !state.programmingMode;"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 90,
+    "label": "ROM"
+  }
+}

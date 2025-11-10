@@ -1,0 +1,51 @@
+{
+  "id": "FIFO",
+  "name": "FIFO Buffer",
+  "category": "Memory",
+  "description": "16-byte first-in-first-out buffer",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -45, "label": "D0" },
+      { "x": -40, "y": -35, "label": "D1" },
+      { "x": -40, "y": -25, "label": "D2" },
+      { "x": -40, "y": -15, "label": "D3" },
+      { "x": -40, "y": -5, "label": "D4" },
+      { "x": -40, "y": 5, "label": "D5" },
+      { "x": -40, "y": 15, "label": "D6" },
+      { "x": -40, "y": 25, "label": "D7" },
+      { "x": -20, "y": 50, "label": "WR" },
+      { "x": 0, "y": 50, "label": "RD" },
+      { "x": 20, "y": 50, "label": "CLK" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -45, "label": "Q0" },
+      { "x": 40, "y": -35, "label": "Q1" },
+      { "x": 40, "y": -25, "label": "Q2" },
+      { "x": 40, "y": -15, "label": "Q3" },
+      { "x": 40, "y": -5, "label": "Q4" },
+      { "x": 40, "y": 5, "label": "Q5" },
+      { "x": 40, "y": 15, "label": "Q6" },
+      { "x": 40, "y": 25, "label": "Q7" },
+      { "x": 40, "y": 40, "label": "FULL" },
+      { "x": 40, "y": 50, "label": "EMPTY" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "buffer": null,
+      "head": 0,
+      "tail": 0,
+      "count": 0,
+      "lastClk": false
+    },
+    "init": "state.buffer = new Array(16).fill(0);",
+    "code": "const wr = inputs[8].getValue();\nconst rd = inputs[9].getValue();\nconst clk = inputs[10].getValue();\nif (clk && !state.lastClk) {\n  if (wr && state.count < 16) {\n    let data = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) data |= (1 << i);\n    }\n    state.buffer[state.tail] = data;\n    state.tail = (state.tail + 1) % 16;\n    state.count++;\n  }\n  if (rd && state.count > 0) {\n    state.head = (state.head + 1) % 16;\n    state.count--;\n  }\n}\nstate.lastClk = clk;\nconst outData = state.count > 0 ? state.buffer[state.head] : 0;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((outData >> i) & 1);\n}\noutputs[8].setValue(state.count >= 16);\noutputs[9].setValue(state.count === 0);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 110,
+    "label": "FIFO"
+  }
+}

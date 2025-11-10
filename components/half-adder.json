@@ -1,0 +1,26 @@
+{
+  "id": "HALF_ADDER",
+  "name": "Half Adder",
+  "category": "Arithmetic",
+  "description": "Adds two single bits, outputs sum and carry",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10, "label": "A" },
+      { "x": -30, "y": 10, "label": "B" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -10, "label": "S" },
+      { "x": 30, "y": 10, "label": "C" }
+    ]
+  },
+  "logic": {
+    "code": "const a = inputs[0].getValue();\nconst b = inputs[1].getValue();\noutputs[0].setValue(a !== b);\noutputs[1].setValue(a && b);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 50,
+    "label": "HA"
+  }
+}

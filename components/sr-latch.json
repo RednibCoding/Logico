@@ -1,0 +1,29 @@
+{
+  "id": "SR_LATCH",
+  "name": "SR Latch",
+  "category": "Sequential",
+  "description": "Set-Reset latch (SR=11 forbidden)",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10, "label": "S" },
+      { "x": -30, "y": 10, "label": "R" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -10, "label": "Q" },
+      { "x": 30, "y": 10, "label": "Q̄" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "q": false
+    },
+    "code": "const s = inputs[0].getValue();\nconst r = inputs[1].getValue();\nif (s && !r) {\n  state.q = true;\n} else if (!s && r) {\n  state.q = false;\n}\noutputs[0].setValue(state.q);\noutputs[1].setValue(!state.q);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 50,
+    "label": "SR"
+  }
+}

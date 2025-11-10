@@ -1,0 +1,29 @@
+{
+  "id": "ASTABLE",
+  "name": "Astable Multivibrator",
+  "category": "Sequential",
+  "description": "Free-running oscillator with configurable frequency",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "Q" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "counter": 0,
+      "output": false,
+      "period": 20
+    },
+    "code": "const enabled = inputs[0].getValue();\nif (enabled) {\n  state.counter++;\n  if (state.counter >= state.period) {\n    state.counter = 0;\n    state.output = !state.output;\n  }\n} else {\n  state.counter = 0;\n  state.output = false;\n}\noutputs[0].setValue(state.output);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 40,
+    "label": "OSC"
+  }
+}

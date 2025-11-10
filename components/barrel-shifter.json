@@ -1,0 +1,42 @@
+{
+  "id": "BARREL_SHIFTER",
+  "name": "Barrel Shifter",
+  "category": "Arithmetic",
+  "description": "8-bit barrel shifter with variable shift amount",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -40, "label": "D0" },
+      { "x": -40, "y": -30, "label": "D1" },
+      { "x": -40, "y": -20, "label": "D2" },
+      { "x": -40, "y": -10, "label": "D3" },
+      { "x": -40, "y": 0, "label": "D4" },
+      { "x": -40, "y": 10, "label": "D5" },
+      { "x": -40, "y": 20, "label": "D6" },
+      { "x": -40, "y": 30, "label": "D7" },
+      { "x": 0, "y": 50, "label": "S0" },
+      { "x": 10, "y": 50, "label": "S1" },
+      { "x": 20, "y": 50, "label": "S2" },
+      { "x": -10, "y": 50, "label": "DIR" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -40, "label": "Q0" },
+      { "x": 40, "y": -30, "label": "Q1" },
+      { "x": 40, "y": -20, "label": "Q2" },
+      { "x": 40, "y": -10, "label": "Q3" },
+      { "x": 40, "y": 0, "label": "Q4" },
+      { "x": 40, "y": 10, "label": "Q5" },
+      { "x": 40, "y": 20, "label": "Q6" },
+      { "x": 40, "y": 30, "label": "Q7" }
+    ]
+  },
+  "logic": {
+    "code": "let data = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) data |= (1 << i);\n}\nconst shift = (inputs[10].getValue() ? 4 : 0) + (inputs[9].getValue() ? 2 : 0) + (inputs[8].getValue() ? 1 : 0);\nconst dir = inputs[11].getValue();\nlet result;\nif (dir) {\n  result = (data << shift) & 0xFF;\n} else {\n  result = data >> shift;\n}\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((result >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 100,
+    "label": "BSHFT"
+  }
+}

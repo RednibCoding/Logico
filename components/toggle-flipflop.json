@@ -1,0 +1,30 @@
+{
+  "id": "TOGGLE_FF",
+  "name": "Toggle Flip-Flop",
+  "category": "Sequential",
+  "description": "Toggles output on each clock pulse",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10, "label": "CLK" },
+      { "x": -30, "y": 10, "label": "RST" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -5, "label": "Q" },
+      { "x": 30, "y": 5, "label": "Q̄" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "q": false,
+      "lastClk": false
+    },
+    "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nif (rst) {\n  state.q = false;\n} else if (clk && !state.lastClk) {\n  state.q = !state.q;\n}\nstate.lastClk = clk;\noutputs[0].setValue(state.q);\noutputs[1].setValue(!state.q);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 40,
+    "label": "TFF"
+  }
+}

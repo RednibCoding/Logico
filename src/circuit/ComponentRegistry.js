@@ -9,6 +9,7 @@ class ComponentRegistry {
     // Initialize - load components from individual JSON files
     async init() {
         const componentFiles = [
+            // Basic Logic Gates
             'components/and.json',
             'components/or.json',
             'components/not.json',
@@ -16,11 +17,115 @@ class ComponentRegistry {
             'components/nand.json',
             'components/nor.json',
             'components/buffer.json',
+            'components/tristate-buffer.json',
+            'components/schmitt-trigger.json',
+            // Input/Output
             'components/input.json',
             'components/output.json',
             'components/clock.json',
             'components/led.json',
-            'components/d-flip-flop.json'
+            'components/open-collector.json',
+            'components/pull-up.json',
+            'components/pull-down.json',
+            'components/debouncer.json',
+            'components/switch-spst.json',
+            'components/switch-spdt.json',
+            'components/push-button.json',
+            'components/probe.json',
+            'components/constant.json',
+            'components/ground.json',
+            'components/vcc.json',
+            'components/splitter-8bit.json',
+            'components/merger-8bit.json',
+            'components/bidirectional-bus.json',
+            // Sequential Logic
+            'components/d-flip-flop.json',
+            'components/jk-flip-flop.json',
+            'components/t-flip-flop.json',
+            'components/sr-latch.json',
+            'components/toggle-flipflop.json',
+            'components/edge-detector.json',
+            'components/monostable.json',
+            'components/astable.json',
+            'components/delay.json',
+            'components/timer.json',
+            'components/watchdog.json',
+            'components/pwm-generator.json',
+            'components/random-generator.json',
+            'components/frequency-divider.json',
+            // Arithmetic (8-bit)
+            'components/half-adder.json',
+            'components/full-adder.json',
+            'components/8-bit-adder.json',
+            'components/8-bit-alu.json',
+            'components/8-bit-comparator.json',
+            // Arithmetic (16-bit)
+            'components/16-bit-adder.json',
+            'components/16-bit-alu.json',
+            'components/16-bit-comparator.json',
+            // Arithmetic (Specialized)
+            'components/zero-detector.json',
+            'components/barrel-shifter.json',
+            'components/parity-generator.json',
+            'components/parity-checker.json',
+            'components/magnitude-comparator.json',
+            'components/bcd-adder.json',
+            // Multiplexers & Demultiplexers
+            'components/mux-2to1.json',
+            'components/mux-4to1.json',
+            'components/mux-8to1.json',
+            'components/demux-4to16.json',
+            // Decoders & Encoders
+            'components/decoder-2to4.json',
+            'components/decoder-3to8.json',
+            'components/instruction-decoder.json',
+            'components/priority-encoder.json',
+            'components/bcd-to-7seg.json',
+            'components/gray-to-binary.json',
+            'components/binary-to-gray.json',
+            'components/excess3-converter.json',
+            // Memory (8-bit)
+            'components/8-bit-register.json',
+            'components/ram-16byte.json',
+            'components/rom-16byte.json',
+            'components/ram-256byte.json',
+            'components/rom-256byte.json',
+            'components/dual-port-ram.json',
+            'components/fifo.json',
+            // Memory (16-bit)
+            'components/16-bit-register.json',
+            // Counters & Shift Registers (8-bit)
+            'components/4-bit-counter.json',
+            'components/8-bit-counter.json',
+            'components/8-bit-shift-register.json',
+            // Counters & Shift Registers (16-bit)
+            'components/16-bit-counter.json',
+            'components/16-bit-shift-register.json',
+            // CPU Components
+            'components/program-counter.json',
+            'components/stack-pointer.json',
+            // Bus & I/O
+            'components/bus-transceiver.json',
+            // Display (8-bit)
+            'components/hex-display.json',
+            'components/7-segment-display.json',
+            'components/8-bit-binary-display.json',
+            // Display (16-bit)
+            'components/16-bit-hex-display.json',
+            // Display (Specialized)
+            'components/segment-driver.json',
+            'components/dot-matrix.json',
+            // Communication Protocols
+            'components/uart-tx.json',
+            'components/uart-rx.json',
+            'components/spi-master.json',
+            'components/i2c-master.json',
+            // Advanced I/O & Control
+            'components/keypad-4x4.json',
+            'components/dac-8bit.json',
+            'components/adc-8bit.json',
+            'components/servo-controller.json',
+            'components/stepper-controller.json'
         ];
 
         for (const file of componentFiles) {

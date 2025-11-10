@@ -22,6 +22,9 @@ class InteractionManager {
         this.selectionStart = null; // Selection box start position
         this.selectionEnd = null;   // Selection box end position
         
+        // Tooltip
+        this.hoveredComponent = null;
+        
         // Clipboard for copy/paste
         this.clipboard = {
             components: [],
@@ -79,6 +82,14 @@ class InteractionManager {
         // Check if clicking on a component
         const component = this.circuit.getComponentAtPoint(worldPos.x, worldPos.y);
         if (component) {
+            // Try component's onMouseDown handler first (for interactive components)
+            const localX = worldPos.x - component.x;
+            const localY = worldPos.y - component.y;
+            if (component.onMouseDown && component.onMouseDown(localX, localY)) {
+                // Component handled the event
+                return;
+            }
+            
             // If clicking on an unselected component while not holding Ctrl, clear selection
             if (!component.selected && !e.ctrlKey && !e.metaKey) {
                 this.circuit.clearSelection();
@@ -128,6 +139,13 @@ class InteractionManager {
         const mousePosEl = document.getElementById('mouse-pos');
         if (mousePosEl) {
             mousePosEl.textContent = `X: ${Math.round(worldPos.x)}, Y: ${Math.round(worldPos.y)}`;
+        }
+
+        // Update hovered component for tooltip (only when not dragging/drawing)
+        if (!this.isPanning && !this.isDrawingWire && !this.isDragging && !this.isSelecting) {
+            this.hoveredComponent = this.circuit.getComponentAtPoint(worldPos.x, worldPos.y);
+        } else {
+            this.hoveredComponent = null;
         }
 
         // Panning
@@ -226,6 +244,16 @@ class InteractionManager {
             return;
         }
 
+        // Check for component mouse up handlers
+        if (!this.isDragging) {
+            const component = this.circuit.getComponentAtPoint(worldPos.x, worldPos.y);
+            if (component && component.onMouseUp) {
+                const localX = worldPos.x - component.x;
+                const localY = worldPos.y - component.y;
+                component.onMouseUp(localX, localY);
+            }
+        }
+
         // End dragging - snap to grid
         if (this.isDragging && this.draggedComponent) {
             const gridSize = this.renderer.gridSize;
@@ -243,8 +271,15 @@ class InteractionManager {
 
         const component = this.circuit.getComponentAtPoint(worldPos.x, worldPos.y);
         if (component) {
+            // Check for INPUT component toggle (legacy)
             if (component.type === 'INPUT') {
                 component.toggle();
+                return;
+            }
+            
+            // Open properties panel if app has one
+            if (this.app && this.app.propertiesPanel) {
+                this.app.propertiesPanel.show(component);
             }
         }
     }
@@ -488,6 +523,10 @@ class InteractionManager {
             };
         }
         return null;
+    }
+
+    getHoveredComponent() {
+        return this.hoveredComponent;
     }
 
     // Add component from palette

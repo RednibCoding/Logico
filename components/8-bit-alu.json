@@ -1,0 +1,51 @@
+{
+  "id": "ALU_8BIT",
+  "name": "8-Bit ALU",
+  "category": "Arithmetic",
+  "description": "8-bit ALU with ADD, SUB, AND, OR, XOR, NOT operations",
+  "pins": {
+    "inputs": [
+      { "x": -45, "y": -40, "label": "A0" },
+      { "x": -45, "y": -30, "label": "A1" },
+      { "x": -45, "y": -20, "label": "A2" },
+      { "x": -45, "y": -10, "label": "A3" },
+      { "x": -45, "y": 0, "label": "A4" },
+      { "x": -45, "y": 10, "label": "A5" },
+      { "x": -45, "y": 20, "label": "A6" },
+      { "x": -45, "y": 30, "label": "A7" },
+      { "x": -25, "y": -40, "label": "B0" },
+      { "x": -25, "y": -30, "label": "B1" },
+      { "x": -25, "y": -20, "label": "B2" },
+      { "x": -25, "y": -10, "label": "B3" },
+      { "x": -25, "y": 0, "label": "B4" },
+      { "x": -25, "y": 10, "label": "B5" },
+      { "x": -25, "y": 20, "label": "B6" },
+      { "x": -25, "y": 30, "label": "B7" },
+      { "x": 0, "y": 50, "label": "OP0" },
+      { "x": 15, "y": 50, "label": "OP1" },
+      { "x": 30, "y": 50, "label": "OP2" }
+    ],
+    "outputs": [
+      { "x": 45, "y": -40, "label": "R0" },
+      { "x": 45, "y": -30, "label": "R1" },
+      { "x": 45, "y": -20, "label": "R2" },
+      { "x": 45, "y": -10, "label": "R3" },
+      { "x": 45, "y": 0, "label": "R4" },
+      { "x": 45, "y": 10, "label": "R5" },
+      { "x": 45, "y": 20, "label": "R6" },
+      { "x": 45, "y": 30, "label": "R7" },
+      { "x": 0, "y": -55, "label": "Z" },
+      { "x": 15, "y": -55, "label": "C" }
+    ]
+  },
+  "logic": {
+    "code": "let a = 0, b = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) a |= (1 << i);\n  if (inputs[i + 8].getValue()) b |= (1 << i);\n}\nconst op = (inputs[18].getValue() ? 4 : 0) + (inputs[17].getValue() ? 2 : 0) + (inputs[16].getValue() ? 1 : 0);\nlet result = 0, carry = false;\nswitch(op) {\n  case 0: result = a + b; carry = result > 255; result &= 0xFF; break;\n  case 1: result = (a - b + 256) & 0xFF; carry = a < b; break;\n  case 2: result = a & b; break;\n  case 3: result = a | b; break;\n  case 4: result = a ^ b; break;\n  case 5: result = (~a) & 0xFF; break;\n  case 6: result = a << 1; carry = (a & 0x80) !== 0; result &= 0xFF; break;\n  case 7: result = a >> 1; carry = (a & 1) !== 0; break;\n}\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((result >> i) & 1);\n}\noutputs[8].setValue(result === 0);\noutputs[9].setValue(carry);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 90,
+    "height": 120,
+    "label": "ALU"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "BIDIRECTIONAL_BUS",
+  "name": "Bidirectional Bus Buffer",
+  "category": "Input/Output",
+  "description": "Bidirectional buffer for bus systems",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -30, "label": "A0" },
+      { "x": -40, "y": -20, "label": "A1" },
+      { "x": -40, "y": -10, "label": "A2" },
+      { "x": -40, "y": 0, "label": "A3" },
+      { "x": -40, "y": 10, "label": "A4" },
+      { "x": -40, "y": 20, "label": "A5" },
+      { "x": -40, "y": 30, "label": "A6" },
+      { "x": -40, "y": 40, "label": "A7" },
+      { "x": 0, "y": -55, "label": "DIR" },
+      { "x": 0, "y": 60, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -30, "label": "B0" },
+      { "x": 40, "y": -20, "label": "B1" },
+      { "x": 40, "y": -10, "label": "B2" },
+      { "x": 40, "y": 0, "label": "B3" },
+      { "x": 40, "y": 10, "label": "B4" },
+      { "x": 40, "y": 20, "label": "B5" },
+      { "x": 40, "y": 30, "label": "B6" },
+      { "x": 40, "y": 40, "label": "B7" }
+    ]
+  },
+  "logic": {
+    "code": "const dir = inputs[8].getValue();\nconst en = inputs[9].getValue();\nif (en && dir) {\n  for (let i = 0; i < 8; i++) {\n    outputs[i].setValue(inputs[i].getValue());\n  }\n} else {\n  for (let i = 0; i < 8; i++) {\n    outputs[i].setValue(false);\n  }\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 120,
+    "label": "BIBUS"
+  }
+}

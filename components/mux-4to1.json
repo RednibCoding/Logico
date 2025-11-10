@@ -1,0 +1,29 @@
+{
+  "id": "MUX_4TO1",
+  "name": "4-to-1 Multiplexer",
+  "category": "Multiplexers",
+  "description": "Selects one of four inputs based on 2-bit select",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -20, "label": "D0" },
+      { "x": -35, "y": -7, "label": "D1" },
+      { "x": -35, "y": 7, "label": "D2" },
+      { "x": -35, "y": 20, "label": "D3" },
+      { "x": 0, "y": 35, "label": "S0" },
+      { "x": 15, "y": 35, "label": "S1" }
+    ],
+    "outputs": [
+      { "x": 35, "y": 0, "label": "Y" }
+    ]
+  },
+  "logic": {
+    "code": "const d = [inputs[0].getValue(), inputs[1].getValue(), inputs[2].getValue(), inputs[3].getValue()];\nconst s0 = inputs[4].getValue();\nconst s1 = inputs[5].getValue();\nconst index = (s1 ? 2 : 0) + (s0 ? 1 : 0);\noutputs[0].setValue(d[index]);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 70,
+    "label": "MUX"
+  }
+}

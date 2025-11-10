@@ -1,0 +1,41 @@
+{
+  "id": "ADC_8BIT",
+  "name": "8-Bit ADC",
+  "category": "Input/Output",
+  "description": "Analog-to-Digital converter with level input",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": 0, "label": "AIN" },
+      { "x": -35, "y": 15, "label": "CLK" },
+      { "x": -35, "y": 30, "label": "START" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -35, "label": "D0" },
+      { "x": 35, "y": -25, "label": "D1" },
+      { "x": 35, "y": -15, "label": "D2" },
+      { "x": 35, "y": -5, "label": "D3" },
+      { "x": 35, "y": 5, "label": "D4" },
+      { "x": 35, "y": 15, "label": "D5" },
+      { "x": 35, "y": 25, "label": "D6" },
+      { "x": 35, "y": 35, "label": "D7" },
+      { "x": 35, "y": 50, "label": "RDY" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "value": 128,
+      "converting": false,
+      "counter": 0,
+      "lastClk": false,
+      "lastStart": false
+    },
+    "code": "const start = inputs[2].getValue();\nconst clk = inputs[1].getValue();\nif (start && !state.lastStart) {\n  state.converting = true;\n  state.counter = 8;\n}\nstate.lastStart = start;\nif (clk && !state.lastClk && state.converting) {\n  state.counter--;\n  if (state.counter === 0) {\n    state.converting = false;\n  }\n}\nstate.lastClk = clk;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.value >> i) & 1);\n}\noutputs[8].setValue(!state.converting);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 100,
+    "label": "ADC"
+  }
+}

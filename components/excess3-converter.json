@@ -1,0 +1,30 @@
+{
+  "id": "EXCESS3_CONV",
+  "name": "Excess-3 Converter",
+  "category": "Encoders",
+  "description": "Converts BCD to Excess-3 code",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -20, "label": "B0" },
+      { "x": -30, "y": -10, "label": "B1" },
+      { "x": -30, "y": 0, "label": "B2" },
+      { "x": -30, "y": 10, "label": "B3" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -20, "label": "E0" },
+      { "x": 30, "y": -10, "label": "E1" },
+      { "x": 30, "y": 0, "label": "E2" },
+      { "x": 30, "y": 10, "label": "E3" }
+    ]
+  },
+  "logic": {
+    "code": "let bcd = 0;\nfor (let i = 0; i < 4; i++) {\n  if (inputs[i].getValue()) bcd |= (1 << i);\n}\nconst excess3 = (bcd + 3) & 0xF;\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue((excess3 >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 50,
+    "label": "XS3"
+  }
+}

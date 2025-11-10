@@ -1,0 +1,38 @@
+{
+  "id": "BIN_TO_GRAY",
+  "name": "Binary to Gray Converter",
+  "category": "Encoders",
+  "description": "Converts 8-bit binary to Gray code",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -35, "label": "B0" },
+      { "x": -35, "y": -25, "label": "B1" },
+      { "x": -35, "y": -15, "label": "B2" },
+      { "x": -35, "y": -5, "label": "B3" },
+      { "x": -35, "y": 5, "label": "B4" },
+      { "x": -35, "y": 15, "label": "B5" },
+      { "x": -35, "y": 25, "label": "B6" },
+      { "x": -35, "y": 35, "label": "B7" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -35, "label": "G0" },
+      { "x": 35, "y": -25, "label": "G1" },
+      { "x": 35, "y": -15, "label": "G2" },
+      { "x": 35, "y": -5, "label": "G3" },
+      { "x": 35, "y": 5, "label": "G4" },
+      { "x": 35, "y": 15, "label": "G5" },
+      { "x": 35, "y": 25, "label": "G6" },
+      { "x": 35, "y": 35, "label": "G7" }
+    ]
+  },
+  "logic": {
+    "code": "let binary = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) binary |= (1 << i);\n}\nconst gray = binary ^ (binary >> 1);\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((gray >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 80,
+    "label": "B→G"
+  }
+}

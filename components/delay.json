@@ -1,0 +1,40 @@
+{
+  "id": "DELAY",
+  "name": "Delay Element",
+  "category": "Sequential",
+  "description": "Delays signal by configurable number of cycles",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "OUT" }
+    ]
+  },
+  "properties": {
+    "delay": {
+      "type": "number",
+      "label": "Delay Cycles",
+      "default": 5,
+      "min": 1,
+      "max": 100,
+      "onChange": "state.buffer = new Array(state.delay).fill(false); state.index = 0;"
+    }
+  },
+  "logic": {
+    "state": {
+      "buffer": null,
+      "index": 0,
+      "delay": 5
+    },
+    "init": "state.buffer = new Array(state.delay).fill(false);",
+    "code": "const input = inputs[0].getValue();\nstate.buffer[state.index] = input;\nconst output = state.buffer[(state.index + 1) % state.delay];\nstate.index = (state.index + 1) % state.delay;\noutputs[0].setValue(output);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 40,
+    "customRender": "// Draw box\nctx.fillStyle = colors.component;\nctx.strokeStyle = colors.wire;\nctx.lineWidth = 2;\nconst r = 5;\nctx.beginPath();\nctx.roundRect(x - width/2, y - height/2, width, height, r);\nctx.fill();\nctx.stroke();\n\n// Draw label\nctx.fillStyle = colors.text;\nctx.font = 'bold 10px monospace';\nctx.textAlign = 'center';\nctx.fillText('DELAY', x, y - 5);\nctx.font = '8px monospace';\nctx.fillText(state.delay + ' cycles', x, y + 6);"
+  }
+}

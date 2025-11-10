@@ -1,0 +1,31 @@
+{
+  "id": "FREQUENCY_DIV",
+  "name": "Frequency Divider",
+  "category": "Sequential",
+  "description": "Divides input clock frequency by power of 2",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -15, "label": "CLK" },
+      { "x": -35, "y": 0, "label": "D0" },
+      { "x": -35, "y": 10, "label": "D1" },
+      { "x": -35, "y": 20, "label": "D2" }
+    ],
+    "outputs": [
+      { "x": 35, "y": 0, "label": "OUT" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "counter": 0,
+      "lastClk": false
+    },
+    "code": "const clk = inputs[0].getValue();\nif (clk && !state.lastClk) {\n  state.counter = (state.counter + 1) & 0xFF;\n}\nstate.lastClk = clk;\nlet div = 0;\nfor (let i = 0; i < 3; i++) {\n  if (inputs[i + 1].getValue()) div |= (1 << i);\n}\nconst divider = Math.pow(2, div);\noutputs[0].setValue((state.counter % divider) < (divider / 2));"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 55,
+    "label": "÷2ⁿ"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "COUNTER_16BIT",
+  "name": "16-Bit Counter",
+  "category": "Sequential",
+  "description": "16-bit binary counter with clock, reset, and enable",
+  "pins": {
+    "inputs": [
+      { "x": -45, "y": -20, "label": "CLK" },
+      { "x": -45, "y": 0, "label": "RST" },
+      { "x": -45, "y": 20, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 45, "y": -80, "label": "Q0" },
+      { "x": 45, "y": -70, "label": "Q1" },
+      { "x": 45, "y": -60, "label": "Q2" },
+      { "x": 45, "y": -50, "label": "Q3" },
+      { "x": 45, "y": -40, "label": "Q4" },
+      { "x": 45, "y": -30, "label": "Q5" },
+      { "x": 45, "y": -20, "label": "Q6" },
+      { "x": 45, "y": -10, "label": "Q7" },
+      { "x": 45, "y": 0, "label": "Q8" },
+      { "x": 45, "y": 10, "label": "Q9" },
+      { "x": 45, "y": 20, "label": "Q10" },
+      { "x": 45, "y": 30, "label": "Q11" },
+      { "x": 45, "y": 40, "label": "Q12" },
+      { "x": 45, "y": 50, "label": "Q13" },
+      { "x": 45, "y": 60, "label": "Q14" },
+      { "x": 45, "y": 70, "label": "Q15" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "count": 0,
+      "lastClock": false
+    },
+    "code": "const clock = inputs[0].getValue();\nconst reset = inputs[1].getValue();\nconst enable = inputs[2].getValue();\nif (reset) {\n  state.count = 0;\n} else if (clock && !state.lastClock && enable) {\n  state.count = (state.count + 1) % 65536;\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 16; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 90,
+    "height": 170,
+    "label": "CNT16"
+  }
+}

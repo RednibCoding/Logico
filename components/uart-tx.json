@@ -1,0 +1,41 @@
+{
+  "id": "UART_TX",
+  "name": "UART Transmitter",
+  "category": "Input/Output",
+  "description": "Serial UART transmitter with configurable baud rate",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -30, "label": "D0" },
+      { "x": -40, "y": -20, "label": "D1" },
+      { "x": -40, "y": -10, "label": "D2" },
+      { "x": -40, "y": 0, "label": "D3" },
+      { "x": -40, "y": 10, "label": "D4" },
+      { "x": -40, "y": 20, "label": "D5" },
+      { "x": -40, "y": 30, "label": "D6" },
+      { "x": -40, "y": 40, "label": "D7" },
+      { "x": 0, "y": 55, "label": "CLK" },
+      { "x": 15, "y": 55, "label": "SEND" }
+    ],
+    "outputs": [
+      { "x": 40, "y": 0, "label": "TX" },
+      { "x": 40, "y": 15, "label": "BUSY" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "shiftReg": 0,
+      "bitCount": 0,
+      "busy": false,
+      "lastClk": false,
+      "lastSend": false
+    },
+    "code": "const clk = inputs[8].getValue();\nconst send = inputs[9].getValue();\nif (send && !state.lastSend && !state.busy) {\n  let data = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[i].getValue()) data |= (1 << i);\n  }\n  state.shiftReg = (data << 1) | 0x200;\n  state.bitCount = 10;\n  state.busy = true;\n}\nstate.lastSend = send;\nif (clk && !state.lastClk && state.busy) {\n  state.bitCount--;\n  if (state.bitCount === 0) {\n    state.busy = false;\n  }\n}\nstate.lastClk = clk;\nconst tx = state.busy ? ((state.shiftReg >> (10 - state.bitCount)) & 1) : true;\noutputs[0].setValue(tx);\noutputs[1].setValue(state.busy);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 100,
+    "label": "UART-TX"
+  }
+}

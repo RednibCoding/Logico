@@ -1,0 +1,32 @@
+{
+  "id": "PARITY_CHK",
+  "name": "Parity Checker",
+  "category": "Arithmetic",
+  "description": "Checks parity of 8-bit data with parity bit",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -40, "label": "D0" },
+      { "x": -35, "y": -30, "label": "D1" },
+      { "x": -35, "y": -20, "label": "D2" },
+      { "x": -35, "y": -10, "label": "D3" },
+      { "x": -35, "y": 0, "label": "D4" },
+      { "x": -35, "y": 10, "label": "D5" },
+      { "x": -35, "y": 20, "label": "D6" },
+      { "x": -35, "y": 30, "label": "D7" },
+      { "x": -35, "y": 45, "label": "P" }
+    ],
+    "outputs": [
+      { "x": 35, "y": 0, "label": "ERR" }
+    ]
+  },
+  "logic": {
+    "code": "let count = 0;\nfor (let i = 0; i < 9; i++) {\n  if (inputs[i].getValue()) count++;\n}\nconst error = (count % 2) !== 0;\noutputs[0].setValue(error);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 100,
+    "label": "CHK"
+  }
+}

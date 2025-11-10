@@ -28,6 +28,9 @@ class App {
         // Initialize modal
         this.modal = new Modal();
         
+        // Initialize properties panel
+        this.propertiesPanel = new PropertiesPanel();
+        
         this.setupUI();
         this.buildPalette(); // Build palette from registry
         this.updateSimulationUI(false); // Initialize UI state
@@ -40,7 +43,6 @@ class App {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
                 this.renderer.resize();
-                this.render();
             }, 100);
         });
         
@@ -48,7 +50,6 @@ class App {
         if (window.ResizeObserver) {
             const resizeObserver = new ResizeObserver(() => {
                 this.renderer.resize();
-                this.render();
             });
             resizeObserver.observe(this.canvas.parentElement);
         }
@@ -128,13 +129,6 @@ class App {
             this.simulator.evaluate(); // Re-evaluate to update disconnected components
             this.updateStatus('Stopped');
             this.updateSimulationUI(false);
-        });
-
-                // Clear button
-        document.getElementById('btn-clear').addEventListener('click', async () => {
-            if (await this.modal.showConfirm('Clear the entire circuit?', 'Clear Circuit')) {
-                this.clearCircuit();
-            }
         });
 
         // Save button
@@ -309,7 +303,8 @@ class App {
             const circuit = this.getCurrentCircuit();
             const tempWire = this.interactionManager.getTemporaryWire();
             const selectionBox = this.interactionManager.getSelectionBox();
-            this.renderer.render(circuit, tempWire, selectionBox);
+            const hoveredComponent = this.interactionManager.getHoveredComponent();
+            this.renderer.render(circuit, tempWire, selectionBox, hoveredComponent);
             requestAnimationFrame(render);
         };
         render();

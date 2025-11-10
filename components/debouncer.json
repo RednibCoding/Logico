@@ -1,0 +1,29 @@
+{
+  "id": "DEBOUNCER",
+  "name": "Debouncer",
+  "category": "Input/Output",
+  "description": "Switch debouncer with delay",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "OUT" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "stable": false,
+      "lastInput": false,
+      "counter": 0
+    },
+    "code": "const input = inputs[0].getValue();\nif (input !== state.lastInput) {\n  state.counter = 0;\n  state.lastInput = input;\n} else {\n  if (state.counter < 5) {\n    state.counter++;\n  } else {\n    state.stable = input;\n  }\n}\noutputs[0].setValue(state.stable);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 40,
+    "label": "DBNC"
+  }
+}

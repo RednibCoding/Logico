@@ -1,0 +1,33 @@
+{
+  "id": "KEYPAD_4X4",
+  "name": "4x4 Keypad",
+  "category": "Input/Output",
+  "description": "16-key matrix keypad with row/column scanning",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -20, "label": "C0" },
+      { "x": -40, "y": -10, "label": "C1" },
+      { "x": -40, "y": 0, "label": "C2" },
+      { "x": -40, "y": 10, "label": "C3" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -20, "label": "R0" },
+      { "x": 40, "y": -10, "label": "R1" },
+      { "x": 40, "y": 0, "label": "R2" },
+      { "x": 40, "y": 10, "label": "R3" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "pressedKey": -1
+    },
+    "code": "// Simulate key press (key 0-15, -1 for none)\nconst key = state.pressedKey;\nfor (let r = 0; r < 4; r++) {\n  outputs[r].setValue(false);\n}\nif (key >= 0) {\n  const row = Math.floor(key / 4);\n  const col = key % 4;\n  if (inputs[col].getValue()) {\n    outputs[row].setValue(true);\n  }\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rect",
+    "width": 80,
+    "height": 60,
+    "label": "KEYPAD"
+  }
+}

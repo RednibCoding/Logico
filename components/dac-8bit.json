@@ -1,0 +1,32 @@
+{
+  "id": "DAC_8BIT",
+  "name": "8-Bit DAC",
+  "category": "Input/Output",
+  "description": "Digital-to-Analog converter with voltage bar display",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -35, "label": "D0" },
+      { "x": -35, "y": -25, "label": "D1" },
+      { "x": -35, "y": -15, "label": "D2" },
+      { "x": -35, "y": -5, "label": "D3" },
+      { "x": -35, "y": 5, "label": "D4" },
+      { "x": -35, "y": 15, "label": "D5" },
+      { "x": -35, "y": 25, "label": "D6" },
+      { "x": -35, "y": 35, "label": "D7" }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "state": {
+      "value": 0
+    },
+    "code": "state.value = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) state.value |= (1 << i);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 90,
+    "customRender": "// Draw voltage bar\nconst barWidth = 40;\nconst barHeight = 50;\nconst barX = x - barWidth/2;\nconst barY = y - barHeight/2;\n\n// Background\nctx.fillStyle = '#1e1e1e';\nctx.fillRect(barX, barY, barWidth, barHeight);\nctx.strokeStyle = colors.wire;\nctx.lineWidth = 1;\nctx.strokeRect(barX, barY, barWidth, barHeight);\n\n// Filled portion\nconst fillHeight = (state.value / 255) * barHeight;\nctx.fillStyle = '#4ec9b0';\nctx.fillRect(barX, barY + barHeight - fillHeight, barWidth, fillHeight);\n\n// Value text\nctx.fillStyle = colors.text;\nctx.font = 'bold 10px monospace';\nctx.textAlign = 'center';\nctx.fillText('DAC', x, y - height/2 + 12);\nctx.font = '8px monospace';\nconst voltage = (state.value / 255 * 5).toFixed(2);\nctx.fillText(voltage + 'V', x, y + height/2 - 5);"
+  }
+}

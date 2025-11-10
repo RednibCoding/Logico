@@ -1,0 +1,33 @@
+{
+  "id": "BCD_TO_7SEG",
+  "name": "BCD to 7-Segment Decoder",
+  "category": "Decoders",
+  "description": "Converts 4-bit BCD to 7-segment display outputs",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -20, "label": "D0" },
+      { "x": -35, "y": -10, "label": "D1" },
+      { "x": -35, "y": 0, "label": "D2" },
+      { "x": -35, "y": 10, "label": "D3" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -30, "label": "a" },
+      { "x": 35, "y": -20, "label": "b" },
+      { "x": 35, "y": -10, "label": "c" },
+      { "x": 35, "y": 0, "label": "d" },
+      { "x": 35, "y": 10, "label": "e" },
+      { "x": 35, "y": 20, "label": "f" },
+      { "x": 35, "y": 30, "label": "g" }
+    ]
+  },
+  "logic": {
+    "code": "let bcd = 0;\nfor (let i = 0; i < 4; i++) {\n  if (inputs[i].getValue()) bcd |= (1 << i);\n}\nconst segments = [\n  0b1111110,\n  0b0110000,\n  0b1101101,\n  0b1111001,\n  0b0110011,\n  0b1011011,\n  0b1011111,\n  0b1110000,\n  0b1111111,\n  0b1111011\n];\nconst pattern = bcd < 10 ? segments[bcd] : 0;\nfor (let i = 0; i < 7; i++) {\n  outputs[i].setValue((pattern >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 70,
+    "label": "BCD7"
+  }
+}

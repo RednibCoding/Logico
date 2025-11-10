@@ -1,0 +1,41 @@
+{
+  "id": "COMPARATOR_8BIT",
+  "name": "8-Bit Comparator",
+  "category": "Arithmetic",
+  "description": "Compares two 8-bit values (A=B, A>B, A<B)",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -35, "label": "A0" },
+      { "x": -40, "y": -25, "label": "A1" },
+      { "x": -40, "y": -15, "label": "A2" },
+      { "x": -40, "y": -5, "label": "A3" },
+      { "x": -40, "y": 5, "label": "A4" },
+      { "x": -40, "y": 15, "label": "A5" },
+      { "x": -40, "y": 25, "label": "A6" },
+      { "x": -40, "y": 35, "label": "A7" },
+      { "x": -20, "y": -35, "label": "B0" },
+      { "x": -20, "y": -25, "label": "B1" },
+      { "x": -20, "y": -15, "label": "B2" },
+      { "x": -20, "y": -5, "label": "B3" },
+      { "x": -20, "y": 5, "label": "B4" },
+      { "x": -20, "y": 15, "label": "B5" },
+      { "x": -20, "y": 25, "label": "B6" },
+      { "x": -20, "y": 35, "label": "B7" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -15, "label": "EQ" },
+      { "x": 35, "y": 0, "label": "GT" },
+      { "x": 35, "y": 15, "label": "LT" }
+    ]
+  },
+  "logic": {
+    "code": "let a = 0, b = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) a |= (1 << i);\n  if (inputs[i + 8].getValue()) b |= (1 << i);\n}\noutputs[0].setValue(a === b);\noutputs[1].setValue(a > b);\noutputs[2].setValue(a < b);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 80,
+    "label": "CMP"
+  }
+}

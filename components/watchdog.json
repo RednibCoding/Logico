@@ -1,0 +1,31 @@
+{
+  "id": "WATCHDOG",
+  "name": "Watchdog Timer",
+  "category": "Sequential",
+  "description": "Timeout detector with reset input",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -15, "label": "CLK" },
+      { "x": -35, "y": 0, "label": "KICK" },
+      { "x": -35, "y": 15, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 35, "y": 0, "label": "TIMEOUT" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "counter": 0,
+      "lastClk": false,
+      "timeout": 50
+    },
+    "code": "const clk = inputs[0].getValue();\nconst kick = inputs[1].getValue();\nconst en = inputs[2].getValue();\nif (kick) {\n  state.counter = 0;\n} else if (clk && !state.lastClk && en) {\n  if (state.counter < state.timeout + 10) {\n    state.counter++;\n  }\n}\nstate.lastClk = clk;\noutputs[0].setValue(state.counter >= state.timeout);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 50,
+    "label": "WDT"
+  }
+}

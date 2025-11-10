@@ -1,0 +1,27 @@
+{
+  "id": "FULL_ADDER",
+  "name": "Full Adder",
+  "category": "Arithmetic",
+  "description": "Adds three bits (A, B, Cin), outputs sum and carry",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -15, "label": "A" },
+      { "x": -30, "y": 0, "label": "B" },
+      { "x": -30, "y": 15, "label": "Cin" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -7, "label": "S" },
+      { "x": 30, "y": 7, "label": "Cout" }
+    ]
+  },
+  "logic": {
+    "code": "const a = inputs[0].getValue();\nconst b = inputs[1].getValue();\nconst cin = inputs[2].getValue();\nconst sum = a !== b !== cin;\nconst cout = (a && b) || (cin && (a !== b));\noutputs[0].setValue(sum);\noutputs[1].setValue(cout);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 60,
+    "label": "FA"
+  }
+}

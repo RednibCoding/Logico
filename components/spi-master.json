@@ -1,0 +1,45 @@
+{
+  "id": "SPI_MASTER",
+  "name": "SPI Master",
+  "category": "Input/Output",
+  "description": "SPI master controller with MOSI, MISO, SCK, CS",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -35, "label": "D0" },
+      { "x": -40, "y": -25, "label": "D1" },
+      { "x": -40, "y": -15, "label": "D2" },
+      { "x": -40, "y": -5, "label": "D3" },
+      { "x": -40, "y": 5, "label": "D4" },
+      { "x": -40, "y": 15, "label": "D5" },
+      { "x": -40, "y": 25, "label": "D6" },
+      { "x": -40, "y": 35, "label": "D7" },
+      { "x": -15, "y": 50, "label": "MISO" },
+      { "x": 0, "y": 50, "label": "START" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -30, "label": "MOSI" },
+      { "x": 40, "y": -15, "label": "SCK" },
+      { "x": 40, "y": 0, "label": "CS" },
+      { "x": 40, "y": 20, "label": "Q0" },
+      { "x": 40, "y": 30, "label": "Q1" },
+      { "x": 40, "y": 40, "label": "Q2" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "txData": 0,
+      "rxData": 0,
+      "bitCount": 0,
+      "clkState": false,
+      "lastStart": false
+    },
+    "code": "const start = inputs[9].getValue();\nif (start && !state.lastStart && state.bitCount === 0) {\n  state.txData = 0;\n  for (let i = 0; i < 8; i++) {\n    if (inputs[i].getValue()) state.txData |= (1 << (7-i));\n  }\n  state.bitCount = 8;\n  state.rxData = 0;\n}\nstate.lastStart = start;\nif (state.bitCount > 0) {\n  state.clkState = !state.clkState;\n  if (state.clkState) {\n    const miso = inputs[8].getValue();\n    state.rxData = (state.rxData << 1) | (miso ? 1 : 0);\n    state.bitCount--;\n    state.txData <<= 1;\n  }\n}\noutputs[0].setValue((state.txData & 0x80) !== 0);\noutputs[1].setValue(state.clkState && state.bitCount > 0);\noutputs[2].setValue(state.bitCount === 0);\nfor (let i = 0; i < 3; i++) {\n  outputs[3 + i].setValue((state.rxData >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 100,
+    "label": "SPI-M"
+  }
+}

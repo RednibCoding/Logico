@@ -1,0 +1,28 @@
+{
+  "id": "DECODER_2TO4",
+  "name": "2-to-4 Decoder",
+  "category": "Decoders",
+  "description": "Decodes 2-bit input to 4 output lines (one-hot)",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -10, "label": "A0" },
+      { "x": -30, "y": 10, "label": "A1" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -20, "label": "Y0" },
+      { "x": 30, "y": -7, "label": "Y1" },
+      { "x": 30, "y": 7, "label": "Y2" },
+      { "x": 30, "y": 20, "label": "Y3" }
+    ]
+  },
+  "logic": {
+    "code": "const a0 = inputs[0].getValue();\nconst a1 = inputs[1].getValue();\nconst index = (a1 ? 2 : 0) + (a0 ? 1 : 0);\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue(i === index);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 70,
+    "label": "DEC"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "COUNTER_4BIT",
+  "name": "4-Bit Counter",
+  "category": "Sequential",
+  "description": "4-bit binary counter with clock and reset",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -10, "label": "CLK" },
+      { "x": -35, "y": 10, "label": "RST" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -20, "label": "Q0" },
+      { "x": 35, "y": -7, "label": "Q1" },
+      { "x": 35, "y": 7, "label": "Q2" },
+      { "x": 35, "y": 20, "label": "Q3" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "count": 0,
+      "lastClock": false
+    },
+    "code": "const clock = inputs[0].getValue();\nconst reset = inputs[1].getValue();\nif (reset) {\n  state.count = 0;\n} else if (clock && !state.lastClock) {\n  state.count = (state.count + 1) % 16;\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 70,
+    "label": "CNT4"
+  }
+}

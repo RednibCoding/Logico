@@ -1,0 +1,41 @@
+{
+  "id": "DOT_MATRIX",
+  "name": "8x8 LED Matrix",
+  "category": "Display",
+  "description": "8x8 LED dot matrix display",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -40, "label": "R0" },
+      { "x": -40, "y": -30, "label": "R1" },
+      { "x": -40, "y": -20, "label": "R2" },
+      { "x": -40, "y": -10, "label": "R3" },
+      { "x": -40, "y": 0, "label": "R4" },
+      { "x": -40, "y": 10, "label": "R5" },
+      { "x": -40, "y": 20, "label": "R6" },
+      { "x": -40, "y": 30, "label": "R7" },
+      { "x": 40, "y": -40, "label": "C0" },
+      { "x": 40, "y": -30, "label": "C1" },
+      { "x": 40, "y": -20, "label": "C2" },
+      { "x": 40, "y": -10, "label": "C3" },
+      { "x": 40, "y": 0, "label": "C4" },
+      { "x": 40, "y": 10, "label": "C5" },
+      { "x": 40, "y": 20, "label": "C6" },
+      { "x": 40, "y": 30, "label": "C7" }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "state": {
+      "rows": 0,
+      "cols": 0
+    },
+    "code": "state.rows = 0;\nstate.cols = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) state.rows |= (1 << i);\n  if (inputs[i + 8].getValue()) state.cols |= (1 << i);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rect",
+    "width": 80,
+    "height": 90,
+    "customRender": "// Draw 8x8 LED matrix\nconst ledSize = 3;\nconst spacing = 8;\nconst startX = x - 28;\nconst startY = y - 28;\n\nfor (let r = 0; r < 8; r++) {\n  for (let c = 0; c < 8; c++) {\n    const rowOn = (state.rows >> r) & 1;\n    const colOn = (state.cols >> c) & 1;\n    const on = rowOn && colOn;\n    \n    ctx.fillStyle = on ? '#ff0000' : '#2d2d30';\n    ctx.fillRect(\n      startX + c * spacing,\n      startY + r * spacing,\n      ledSize,\n      ledSize\n    );\n  }\n}\n\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.textAlign = 'center';\nctx.fillText('MATRIX', x, y + 42);"
+  }
+}

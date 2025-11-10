@@ -1,0 +1,46 @@
+{
+  "id": "PROGRAM_COUNTER",
+  "name": "Program Counter",
+  "category": "Sequential",
+  "description": "Program counter with increment, load, and reset",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -40, "label": "D0" },
+      { "x": -40, "y": -30, "label": "D1" },
+      { "x": -40, "y": -20, "label": "D2" },
+      { "x": -40, "y": -10, "label": "D3" },
+      { "x": -40, "y": 0, "label": "D4" },
+      { "x": -40, "y": 10, "label": "D5" },
+      { "x": -40, "y": 20, "label": "D6" },
+      { "x": -40, "y": 30, "label": "D7" },
+      { "x": 0, "y": 55, "label": "CLK" },
+      { "x": 15, "y": 55, "label": "INC" },
+      { "x": -15, "y": 55, "label": "LOAD" },
+      { "x": -30, "y": 55, "label": "RST" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -40, "label": "Q0" },
+      { "x": 40, "y": -30, "label": "Q1" },
+      { "x": 40, "y": -20, "label": "Q2" },
+      { "x": 40, "y": -10, "label": "Q3" },
+      { "x": 40, "y": 0, "label": "Q4" },
+      { "x": 40, "y": 10, "label": "Q5" },
+      { "x": 40, "y": 20, "label": "Q6" },
+      { "x": 40, "y": 30, "label": "Q7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "pc": 0,
+      "lastClock": false
+    },
+    "code": "const clock = inputs[8].getValue();\nconst inc = inputs[9].getValue();\nconst load = inputs[10].getValue();\nconst rst = inputs[11].getValue();\nif (rst) {\n  state.pc = 0;\n} else if (clock && !state.lastClock) {\n  if (load) {\n    state.pc = 0;\n    for (let i = 0; i < 8; i++) {\n      if (inputs[i].getValue()) state.pc |= (1 << i);\n    }\n  } else if (inc) {\n    state.pc = (state.pc + 1) % 256;\n  }\n}\nstate.lastClock = clock;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.pc >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 110,
+    "label": "PC"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "id": "ROM_256BYTE",
+  "name": "256-Byte ROM",
+  "category": "Memory",
+  "description": "256-byte ROM with 8-bit address, 8-bit data output",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -40, "label": "A0" },
+      { "x": -40, "y": -30, "label": "A1" },
+      { "x": -40, "y": -20, "label": "A2" },
+      { "x": -40, "y": -10, "label": "A3" },
+      { "x": -40, "y": 0, "label": "A4" },
+      { "x": -40, "y": 10, "label": "A5" },
+      { "x": -40, "y": 20, "label": "A6" },
+      { "x": -40, "y": 30, "label": "A7" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -40, "label": "D0" },
+      { "x": 40, "y": -30, "label": "D1" },
+      { "x": 40, "y": -20, "label": "D2" },
+      { "x": 40, "y": -10, "label": "D3" },
+      { "x": 40, "y": 0, "label": "D4" },
+      { "x": 40, "y": 10, "label": "D5" },
+      { "x": 40, "y": 20, "label": "D6" },
+      { "x": 40, "y": 30, "label": "D7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "memory": null
+    },
+    "init": "state.memory = new Array(256).fill(0);\nfor (let i = 0; i < 256; i++) state.memory[i] = i % 256;",
+    "code": "let addr = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) addr |= (1 << i);\n}\nconst value = state.memory[addr];\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((value >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 100,
+    "label": "ROM"
+  }
+}

@@ -110,4 +110,111 @@ class GenericComponent extends Component {
     getRenderingDef() {
         return this.definition.rendering;
     }
+
+    // Property system
+    getProperty(key) {
+        const properties = this.definition.properties || {};
+        const propDef = properties[key];
+        
+        if (!propDef) return undefined;
+        
+        // Check if value is in state
+        if (this.state[key] !== undefined) {
+            return this.state[key];
+        }
+        
+        // Return default value
+        return propDef.default;
+    }
+
+    setProperty(key, value) {
+        const properties = this.definition.properties || {};
+        const propDef = properties[key];
+        
+        if (!propDef) {
+            console.warn(`Property ${key} not defined for ${this.type}`);
+            return;
+        }
+
+        // Validate and convert value
+        let validatedValue = value;
+        
+        if (propDef.type === 'number') {
+            validatedValue = parseFloat(value);
+            if (isNaN(validatedValue)) {
+                validatedValue = propDef.default || 0;
+            }
+            if (propDef.min !== undefined) {
+                validatedValue = Math.max(propDef.min, validatedValue);
+            }
+            if (propDef.max !== undefined) {
+                validatedValue = Math.min(propDef.max, validatedValue);
+            }
+        } else if (propDef.type === 'boolean') {
+            validatedValue = Boolean(value);
+        }
+
+        // Update state
+        this.state[key] = validatedValue;
+
+        // Run onChange callback if provided
+        if (propDef.onChange) {
+            try {
+                const func = new Function('state', 'value', propDef.onChange);
+                func(this.state, validatedValue);
+            } catch (error) {
+                console.error(`Error in onChange for property ${key}:`, error);
+            }
+        }
+
+        // Re-evaluate component
+        this.evaluate();
+    }
+
+    // Mouse interaction handlers
+    onMouseDown(x, y) {
+        const logic = this.definition.logic;
+        
+        if (logic.onMouseDown) {
+            try {
+                const func = new Function('inputs', 'outputs', 'state', 'x', 'y', logic.onMouseDown);
+                func(this.inputPins, this.outputPins, this.state, x, y);
+                this.evaluate();
+                return true; // Handled
+            } catch (error) {
+                console.error(`Error in onMouseDown code for ${this.type}:`, error);
+            }
+        }
+        return false;
+    }
+
+    onMouseUp(x, y) {
+        const logic = this.definition.logic;
+        
+        if (logic.onMouseUp) {
+            try {
+                const func = new Function('inputs', 'outputs', 'state', 'x', 'y', logic.onMouseUp);
+                func(this.inputPins, this.outputPins, this.state, x, y);
+                this.evaluate();
+                return true; // Handled
+            } catch (error) {
+                console.error(`Error in onMouseUp code for ${this.type}:`, error);
+            }
+        }
+        return false;
+    }
+
+    // Re-run initialization code after state restoration (used during deserialization)
+    reinitialize() {
+        const logic = this.definition.logic;
+        
+        if (logic.init) {
+            try {
+                const func = new Function('state', logic.init);
+                func(this.state);
+            } catch (error) {
+                console.error(`Error in reinitialize code for ${this.type}:`, error);
+            }
+        }
+    }
 }

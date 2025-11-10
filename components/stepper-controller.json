@@ -1,0 +1,33 @@
+{
+  "id": "STEPPER_CTRL",
+  "name": "Stepper Motor Controller",
+  "category": "Input/Output",
+  "description": "4-phase stepper motor controller",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -15, "label": "CLK" },
+      { "x": -35, "y": 0, "label": "DIR" },
+      { "x": -35, "y": 15, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -20, "label": "A" },
+      { "x": 35, "y": -10, "label": "B" },
+      { "x": 35, "y": 0, "label": "C" },
+      { "x": 35, "y": 10, "label": "D" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "step": 0,
+      "lastClk": false
+    },
+    "code": "const clk = inputs[0].getValue();\nconst dir = inputs[1].getValue();\nconst en = inputs[2].getValue();\nif (clk && !state.lastClk && en) {\n  if (dir) {\n    state.step = (state.step + 1) % 4;\n  } else {\n    state.step = (state.step - 1 + 4) % 4;\n  }\n}\nstate.lastClk = clk;\nconst phases = [\n  [true, false, false, false],\n  [false, true, false, false],\n  [false, false, true, false],\n  [false, false, false, true]\n];\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue(phases[state.step][i]);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 60,
+    "label": "STEP"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "DEMUX_4TO16",
+  "name": "4-to-16 Demultiplexer",
+  "category": "Multiplexers",
+  "description": "Routes input to one of 16 outputs based on 4-bit select",
+  "pins": {
+    "inputs": [
+      { "x": -40, "y": -20, "label": "IN" },
+      { "x": -40, "y": 0, "label": "S0" },
+      { "x": -40, "y": 10, "label": "S1" },
+      { "x": -40, "y": 20, "label": "S2" },
+      { "x": -40, "y": 30, "label": "S3" }
+    ],
+    "outputs": [
+      { "x": 40, "y": -75, "label": "Y0" },
+      { "x": 40, "y": -65, "label": "Y1" },
+      { "x": 40, "y": -55, "label": "Y2" },
+      { "x": 40, "y": -45, "label": "Y3" },
+      { "x": 40, "y": -35, "label": "Y4" },
+      { "x": 40, "y": -25, "label": "Y5" },
+      { "x": 40, "y": -15, "label": "Y6" },
+      { "x": 40, "y": -5, "label": "Y7" },
+      { "x": 40, "y": 5, "label": "Y8" },
+      { "x": 40, "y": 15, "label": "Y9" },
+      { "x": 40, "y": 25, "label": "Y10" },
+      { "x": 40, "y": 35, "label": "Y11" },
+      { "x": 40, "y": 45, "label": "Y12" },
+      { "x": 40, "y": 55, "label": "Y13" },
+      { "x": 40, "y": 65, "label": "Y14" },
+      { "x": 40, "y": 75, "label": "Y15" }
+    ]
+  },
+  "logic": {
+    "code": "const input = inputs[0].getValue();\nconst sel = (inputs[4].getValue() ? 8 : 0) + (inputs[3].getValue() ? 4 : 0) + (inputs[2].getValue() ? 2 : 0) + (inputs[1].getValue() ? 1 : 0);\nfor (let i = 0; i < 16; i++) {\n  outputs[i].setValue(i === sel && input);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 80,
+    "height": 160,
+    "label": "DEMUX"
+  }
+}

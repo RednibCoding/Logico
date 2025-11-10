@@ -1,0 +1,28 @@
+{
+  "id": "SWITCH_SPDT",
+  "name": "SPDT Switch",
+  "category": "Input/Output",
+  "description": "Single-pole double-throw switch (clickable 3-way)",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 30, "y": -15, "label": "OUT1" },
+      { "x": 30, "y": 15, "label": "OUT2" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "position": 0
+    },
+    "code": "const input = inputs[0].getValue();\nif (state.position === 0) {\n  outputs[0].setValue(input);\n  outputs[1].setValue(false);\n} else {\n  outputs[0].setValue(false);\n  outputs[1].setValue(input);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rect",
+    "width": 60,
+    "height": 50,
+    "customRender": "// Draw switch arm\nctx.strokeStyle = '#4ec9b0';\nctx.lineWidth = 3;\nctx.beginPath();\nctx.moveTo(x - 12, y);\nif (state.position === 0) {\n  ctx.lineTo(x + 8, y - 15);\n} else {\n  ctx.lineTo(x + 8, y + 15);\n}\nctx.stroke();\n\n// Draw terminals\nctx.fillStyle = colors.wire;\nfor (const py of [-15, 15]) {\n  ctx.beginPath();\n  ctx.arc(x + 12, y + py, 2, 0, Math.PI * 2);\n  ctx.fill();\n}\n\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.textAlign = 'center';\nctx.fillText('SPDT', x, y + height/2 - 3);"
+  }
+}

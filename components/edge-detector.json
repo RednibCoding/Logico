@@ -1,0 +1,28 @@
+{
+  "id": "EDGE_DETECTOR",
+  "name": "Edge Detector",
+  "category": "Sequential",
+  "description": "Detects rising and falling edges",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -10, "label": "RISE" },
+      { "x": 35, "y": 10, "label": "FALL" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "lastInput": false
+    },
+    "code": "const input = inputs[0].getValue();\nconst rising = input && !state.lastInput;\nconst falling = !input && state.lastInput;\nstate.lastInput = input;\noutputs[0].setValue(rising);\noutputs[1].setValue(falling);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 50,
+    "label": "EDGE"
+  }
+}

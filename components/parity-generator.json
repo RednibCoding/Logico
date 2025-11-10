@@ -1,0 +1,32 @@
+{
+  "id": "PARITY_GEN",
+  "name": "Parity Generator",
+  "category": "Arithmetic",
+  "description": "Generates even/odd parity bit for 8-bit data",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -35, "label": "D0" },
+      { "x": -35, "y": -25, "label": "D1" },
+      { "x": -35, "y": -15, "label": "D2" },
+      { "x": -35, "y": -5, "label": "D3" },
+      { "x": -35, "y": 5, "label": "D4" },
+      { "x": -35, "y": 15, "label": "D5" },
+      { "x": -35, "y": 25, "label": "D6" },
+      { "x": -35, "y": 35, "label": "D7" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -10, "label": "EVEN" },
+      { "x": 35, "y": 10, "label": "ODD" }
+    ]
+  },
+  "logic": {
+    "code": "let count = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) count++;\n}\nconst even = (count % 2) === 0;\noutputs[0].setValue(even);\noutputs[1].setValue(!even);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 80,
+    "label": "PAR"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "id": "ADDER_16BIT",
+  "name": "16-Bit Adder",
+  "category": "Arithmetic",
+  "description": "16-bit ripple carry adder with carry in/out",
+  "pins": {
+    "inputs": [
+      { "x": -50, "y": -80, "label": "A0" },
+      { "x": -50, "y": -70, "label": "A1" },
+      { "x": -50, "y": -60, "label": "A2" },
+      { "x": -50, "y": -50, "label": "A3" },
+      { "x": -50, "y": -40, "label": "A4" },
+      { "x": -50, "y": -30, "label": "A5" },
+      { "x": -50, "y": -20, "label": "A6" },
+      { "x": -50, "y": -10, "label": "A7" },
+      { "x": -50, "y": 0, "label": "A8" },
+      { "x": -50, "y": 10, "label": "A9" },
+      { "x": -50, "y": 20, "label": "A10" },
+      { "x": -50, "y": 30, "label": "A11" },
+      { "x": -50, "y": 40, "label": "A12" },
+      { "x": -50, "y": 50, "label": "A13" },
+      { "x": -50, "y": 60, "label": "A14" },
+      { "x": -50, "y": 70, "label": "A15" },
+      { "x": -30, "y": -80, "label": "B0" },
+      { "x": -30, "y": -70, "label": "B1" },
+      { "x": -30, "y": -60, "label": "B2" },
+      { "x": -30, "y": -50, "label": "B3" },
+      { "x": -30, "y": -40, "label": "B4" },
+      { "x": -30, "y": -30, "label": "B5" },
+      { "x": -30, "y": -20, "label": "B6" },
+      { "x": -30, "y": -10, "label": "B7" },
+      { "x": -30, "y": 0, "label": "B8" },
+      { "x": -30, "y": 10, "label": "B9" },
+      { "x": -30, "y": 20, "label": "B10" },
+      { "x": -30, "y": 30, "label": "B11" },
+      { "x": -30, "y": 40, "label": "B12" },
+      { "x": -30, "y": 50, "label": "B13" },
+      { "x": -30, "y": 60, "label": "B14" },
+      { "x": -30, "y": 70, "label": "B15" },
+      { "x": 0, "y": -95, "label": "Cin" }
+    ],
+    "outputs": [
+      { "x": 50, "y": -80, "label": "S0" },
+      { "x": 50, "y": -70, "label": "S1" },
+      { "x": 50, "y": -60, "label": "S2" },
+      { "x": 50, "y": -50, "label": "S3" },
+      { "x": 50, "y": -40, "label": "S4" },
+      { "x": 50, "y": -30, "label": "S5" },
+      { "x": 50, "y": -20, "label": "S6" },
+      { "x": 50, "y": -10, "label": "S7" },
+      { "x": 50, "y": 0, "label": "S8" },
+      { "x": 50, "y": 10, "label": "S9" },
+      { "x": 50, "y": 20, "label": "S10" },
+      { "x": 50, "y": 30, "label": "S11" },
+      { "x": 50, "y": 40, "label": "S12" },
+      { "x": 50, "y": 50, "label": "S13" },
+      { "x": 50, "y": 60, "label": "S14" },
+      { "x": 50, "y": 70, "label": "S15" },
+      { "x": 0, "y": 90, "label": "Cout" }
+    ]
+  },
+  "logic": {
+    "code": "let carry = inputs[32].getValue();\nfor (let i = 0; i < 16; i++) {\n  const a = inputs[i].getValue();\n  const b = inputs[i + 16].getValue();\n  const sum = a !== b !== carry;\n  carry = (a && b) || (carry && (a !== b));\n  outputs[i].setValue(sum);\n}\noutputs[16].setValue(carry);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 100,
+    "height": 200,
+    "label": "ADD16"
+  }
+}

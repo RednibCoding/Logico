@@ -1,0 +1,31 @@
+{
+  "id": "ZERO_DETECTOR",
+  "name": "Zero Detector",
+  "category": "Arithmetic",
+  "description": "Detects if 8-bit input is all zeros",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -35, "label": "D0" },
+      { "x": -30, "y": -25, "label": "D1" },
+      { "x": -30, "y": -15, "label": "D2" },
+      { "x": -30, "y": -5, "label": "D3" },
+      { "x": -30, "y": 5, "label": "D4" },
+      { "x": -30, "y": 15, "label": "D5" },
+      { "x": -30, "y": 25, "label": "D6" },
+      { "x": -30, "y": 35, "label": "D7" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "Z" }
+    ]
+  },
+  "logic": {
+    "code": "let isZero = true;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) {\n    isZero = false;\n    break;\n  }\n}\noutputs[0].setValue(isZero);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 80,
+    "label": "ZERO"
+  }
+}

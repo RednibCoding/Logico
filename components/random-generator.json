@@ -1,0 +1,36 @@
+{
+  "id": "RANDOM_GEN",
+  "name": "Random Number Generator",
+  "category": "Sequential",
+  "description": "8-bit LFSR-based random number generator",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -10, "label": "CLK" },
+      { "x": -35, "y": 10, "label": "EN" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -35, "label": "Q0" },
+      { "x": 35, "y": -25, "label": "Q1" },
+      { "x": 35, "y": -15, "label": "Q2" },
+      { "x": 35, "y": -5, "label": "Q3" },
+      { "x": 35, "y": 5, "label": "Q4" },
+      { "x": 35, "y": 15, "label": "Q5" },
+      { "x": 35, "y": 25, "label": "Q6" },
+      { "x": 35, "y": 35, "label": "Q7" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "lfsr": 172,
+      "lastClk": false
+    },
+    "code": "const clk = inputs[0].getValue();\nconst en = inputs[1].getValue();\nif (clk && !state.lastClk && en) {\n  const bit = ((state.lfsr >> 0) ^ (state.lfsr >> 2) ^ (state.lfsr >> 3) ^ (state.lfsr >> 4)) & 1;\n  state.lfsr = ((state.lfsr >> 1) | (bit << 7)) & 0xFF;\n}\nstate.lastClk = clk;\nfor (let i = 0; i < 8; i++) {\n  outputs[i].setValue((state.lfsr >> i) & 1);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 80,
+    "label": "RNG"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "SWITCH_SPST",
+  "name": "SPST Switch",
+  "category": "Input/Output",
+  "description": "Single-pole single-throw switch (clickable toggle)",
+  "pins": {
+    "inputs": [],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "OUT" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "closed": false
+    },
+    "code": "outputs[0].setValue(state.closed);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "circle",
+    "width": 60,
+    "height": 60,
+    "customRender": "// Draw switch\nctx.strokeStyle = state.closed ? '#4ec9b0' : colors.wire;\nctx.lineWidth = 3;\nctx.beginPath();\nif (state.closed) {\n  ctx.moveTo(x - 15, y);\n  ctx.lineTo(x + 15, y);\n} else {\n  ctx.moveTo(x - 15, y);\n  ctx.lineTo(x + 10, y - 12);\n}\nctx.stroke();\n\n// Draw terminals\nctx.fillStyle = colors.wire;\nctx.beginPath();\nctx.arc(x - 15, y, 2, 0, Math.PI * 2);\nctx.fill();\nctx.beginPath();\nctx.arc(x + 15, y, 2, 0, Math.PI * 2);\nctx.fill();\n\nctx.fillStyle = colors.text;\nctx.font = '9px monospace';\nctx.textAlign = 'center';\nctx.fillText(state.closed ? 'ON' : 'OFF', x, y + height/2 - 5);"
+  }
+}

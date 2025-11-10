@@ -1,0 +1,34 @@
+{
+  "id": "MERGER_8BIT",
+  "name": "8-Bit Merger",
+  "category": "Input/Output",
+  "description": "Merges 8 individual signals into one 8-bit bus",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": -35, "label": "B0" },
+      { "x": -30, "y": -25, "label": "B1" },
+      { "x": -30, "y": -15, "label": "B2" },
+      { "x": -30, "y": -5, "label": "B3" },
+      { "x": -30, "y": 5, "label": "B4" },
+      { "x": -30, "y": 15, "label": "B5" },
+      { "x": -30, "y": 25, "label": "B6" },
+      { "x": -30, "y": 35, "label": "B7" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "BUS" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "value": 0
+    },
+    "code": "// Merge individual bits into internal value\nlet value = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) value |= (1 << i);\n}\nstate.value = value;\n// For now, output a single signal\noutputs[0].setValue(value !== 0);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 60,
+    "height": 80,
+    "label": "MERGE"
+  }
+}

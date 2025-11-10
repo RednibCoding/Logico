@@ -1,0 +1,34 @@
+{
+  "id": "PRIORITY_ENCODER",
+  "name": "Priority Encoder",
+  "category": "Encoders",
+  "description": "8-to-3 priority encoder, outputs highest priority input",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -35, "label": "D0" },
+      { "x": -35, "y": -25, "label": "D1" },
+      { "x": -35, "y": -15, "label": "D2" },
+      { "x": -35, "y": -5, "label": "D3" },
+      { "x": -35, "y": 5, "label": "D4" },
+      { "x": -35, "y": 15, "label": "D5" },
+      { "x": -35, "y": 25, "label": "D6" },
+      { "x": -35, "y": 35, "label": "D7" }
+    ],
+    "outputs": [
+      { "x": 35, "y": -10, "label": "Y0" },
+      { "x": 35, "y": 0, "label": "Y1" },
+      { "x": 35, "y": 10, "label": "Y2" },
+      { "x": 35, "y": 25, "label": "GS" }
+    ]
+  },
+  "logic": {
+    "code": "let priority = -1;\nfor (let i = 7; i >= 0; i--) {\n  if (inputs[i].getValue()) {\n    priority = i;\n    break;\n  }\n}\nif (priority >= 0) {\n  outputs[0].setValue((priority & 1) !== 0);\n  outputs[1].setValue((priority & 2) !== 0);\n  outputs[2].setValue((priority & 4) !== 0);\n  outputs[3].setValue(true);\n} else {\n  outputs[0].setValue(false);\n  outputs[1].setValue(false);\n  outputs[2].setValue(false);\n  outputs[3].setValue(false);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 70,
+    "height": 80,
+    "label": "PENC"
+  }
+}

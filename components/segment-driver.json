@@ -1,0 +1,32 @@
+{
+  "id": "SEGMENT_DRIVER",
+  "name": "7-Segment Driver",
+  "category": "Display",
+  "description": "LED driver for common cathode 7-segment display",
+  "pins": {
+    "inputs": [
+      { "x": -35, "y": -30, "label": "a" },
+      { "x": -35, "y": -20, "label": "b" },
+      { "x": -35, "y": -10, "label": "c" },
+      { "x": -35, "y": 0, "label": "d" },
+      { "x": -35, "y": 10, "label": "e" },
+      { "x": -35, "y": 20, "label": "f" },
+      { "x": -35, "y": 30, "label": "g" },
+      { "x": -35, "y": 45, "label": "DP" }
+    ],
+    "outputs": []
+  },
+  "logic": {
+    "state": {
+      "segments": 0
+    },
+    "code": "state.segments = 0;\nfor (let i = 0; i < 8; i++) {\n  if (inputs[i].getValue()) state.segments |= (1 << i);\n}"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rect",
+    "width": 70,
+    "height": 100,
+    "customRender": "// Draw 7-segment display\nconst segs = state.segments;\nconst w = 8, h = 3;\nconst cx = x, cy = y;\nconst spacing = 12;\n\nctx.lineWidth = 3;\nctx.lineCap = 'round';\n\n// Segment positions\nconst drawSeg = (bit, x1, y1, x2, y2) => {\n  ctx.strokeStyle = (segs & (1 << bit)) ? '#ff0000' : '#2d2d30';\n  ctx.beginPath();\n  ctx.moveTo(x1, y1);\n  ctx.lineTo(x2, y2);\n  ctx.stroke();\n};\n\n// a (top)\ndrawSeg(0, cx - w, cy - spacing*2, cx + w, cy - spacing*2);\n// b (top right)\ndrawSeg(1, cx + w, cy - spacing*2, cx + w, cy);\n// c (bottom right)\ndrawSeg(2, cx + w, cy, cx + w, cy + spacing*2);\n// d (bottom)\ndrawSeg(3, cx - w, cy + spacing*2, cx + w, cy + spacing*2);\n// e (bottom left)\ndrawSeg(4, cx - w, cy, cx - w, cy + spacing*2);\n// f (top left)\ndrawSeg(5, cx - w, cy - spacing*2, cx - w, cy);\n// g (middle)\ndrawSeg(6, cx - w, cy, cx + w, cy);\n// dp (decimal point)\nctx.fillStyle = (segs & 0x80) ? '#ff0000' : '#2d2d30';\nctx.beginPath();\nctx.arc(cx + w + 5, cy + spacing*2, 2, 0, Math.PI * 2);\nctx.fill();\n\nctx.fillStyle = colors.text;\nctx.font = '8px monospace';\nctx.textAlign = 'center';\nctx.fillText('7SEG', cx, cy - spacing*2 - 10);"
+  }
+}

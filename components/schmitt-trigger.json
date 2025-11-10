@@ -1,0 +1,28 @@
+{
+  "id": "SCHMITT_TRIGGER",
+  "name": "Schmitt Trigger",
+  "category": "Logic Gates",
+  "description": "Schmitt trigger inverter with hysteresis",
+  "pins": {
+    "inputs": [
+      { "x": -30, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 30, "y": 0, "label": "OUT" }
+    ]
+  },
+  "logic": {
+    "state": {
+      "output": false
+    },
+    "code": "const input = inputs[0].getValue();\nstate.output = !input;\noutputs[0].setValue(state.output);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "triangle",
+    "width": 60,
+    "height": 40,
+    "label": "ST",
+    "customRender": "// Draw hysteresis symbol (centered)\nctx.strokeStyle = colors.wire;\nctx.lineWidth = 1;\nctx.beginPath();\nctx.moveTo(x - 15, y - 5);\nctx.lineTo(x - 10, y - 5);\nctx.lineTo(x - 10, y + 5);\nctx.lineTo(x - 5, y + 5);\nctx.lineTo(x - 5, y - 5);\nctx.lineTo(x, y - 5);\nctx.stroke();"
+  }
+}
