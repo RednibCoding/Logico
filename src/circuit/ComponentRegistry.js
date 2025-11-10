@@ -17,6 +17,9 @@ class ComponentRegistry {
             'components/nand.json',
             'components/nor.json',
             'components/buffer.json',
+            'components/splitter-2.json',
+            'components/splitter-3.json',
+            'components/splitter-4.json',
             'components/tristate-buffer.json',
             'components/schmitt-trigger.json',
             // Input/Output

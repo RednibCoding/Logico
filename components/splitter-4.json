@@ -1,0 +1,27 @@
+{
+  "id": "SPLITTER_4",
+  "name": "Splitter (1->4)",
+  "category": "Logic Gates",
+  "description": "Splits one signal into four identical outputs",
+  "pins": {
+    "inputs": [
+      { "x": -25, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 25, "y": -18, "label": "OUT1" },
+      { "x": 25, "y": -6, "label": "OUT2" },
+      { "x": 25, "y": 6, "label": "OUT3" },
+      { "x": 25, "y": 18, "label": "OUT4" }
+    ]
+  },
+  "logic": {
+    "code": "const value = inputs[0].getValue();\noutputs[0].setValue(value);\noutputs[1].setValue(value);\noutputs[2].setValue(value);\noutputs[3].setValue(value);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 50,
+    "height": 55,
+    "label": "SPLT"
+  }
+}

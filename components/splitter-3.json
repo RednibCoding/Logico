@@ -1,0 +1,26 @@
+{
+  "id": "SPLITTER_3",
+  "name": "Splitter (1->3)",
+  "category": "Logic Gates",
+  "description": "Splits one signal into three identical outputs",
+  "pins": {
+    "inputs": [
+      { "x": -25, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 25, "y": -12, "label": "OUT1" },
+      { "x": 25, "y": 0, "label": "OUT2" },
+      { "x": 25, "y": 12, "label": "OUT3" }
+    ]
+  },
+  "logic": {
+    "code": "const value = inputs[0].getValue();\noutputs[0].setValue(value);\noutputs[1].setValue(value);\noutputs[2].setValue(value);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 50,
+    "height": 45,
+    "label": "SPLT"
+  }
+}

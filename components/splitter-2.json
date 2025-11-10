@@ -1,0 +1,25 @@
+{
+  "id": "SPLITTER",
+  "name": "Splitter (1->2)",
+  "category": "Logic Gates",
+  "description": "Splits one signal into two identical outputs",
+  "pins": {
+    "inputs": [
+      { "x": -25, "y": 0, "label": "IN" }
+    ],
+    "outputs": [
+      { "x": 25, "y": -8, "label": "OUT1" },
+      { "x": 25, "y": 8, "label": "OUT2" }
+    ]
+  },
+  "logic": {
+    "code": "const value = inputs[0].getValue();\noutputs[0].setValue(value);\noutputs[1].setValue(value);"
+  },
+  "rendering": {
+    "type": "gate",
+    "shape": "rounded-rect",
+    "width": 50,
+    "height": 35,
+    "label": "SPLT"
+  }
+}
