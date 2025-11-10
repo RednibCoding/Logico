@@ -146,23 +146,26 @@ class Renderer {
     }
 
     drawSubcircuit(x, y, w, h, circuitName, selected) {
-        // Draw rectangular box
+        // Draw rectangular box (centered like other components)
         this.ctx.fillStyle = selected ? this.colors.componentSelected : '#2d4a5c';
         this.ctx.strokeStyle = selected ? this.colors.wireSelected : '#4a90d9';
         this.ctx.lineWidth = selected ? 3 : 2;
         
-        this.ctx.fillRect(x, y, w, h);
-        this.ctx.strokeRect(x, y, w, h);
+        const left = x - w / 2;
+        const top = y - h / 2;
+        
+        this.ctx.fillRect(left, top, w, h);
+        this.ctx.strokeRect(left, top, w, h);
 
         // Draw circuit name
         this.ctx.fillStyle = this.colors.text;
         this.ctx.font = 'bold 12px sans-serif';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText(circuitName, x + w / 2, y + h / 2 + 4);
+        this.ctx.fillText(circuitName, x, y + 4);
         
         // Draw small icon to indicate it's a subcircuit
         this.ctx.font = '10px sans-serif';
-        this.ctx.fillText('⚙', x + w - 10, y + 12);
+        this.ctx.fillText('⚙', x + w / 2 - 10, top + 12);
     }
 
     drawPin(pin) {

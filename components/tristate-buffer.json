@@ -5,11 +5,11 @@
   "description": "Buffer with enable - outputs input when enabled, high-Z when disabled",
   "pins": {
     "inputs": [
-      { "x": -30, "y": -10, "label": "IN" },
-      { "x": 0, "y": 20, "label": "EN" }
+      { "x": -30, "y": 0, "label": "IN" },
+      { "x": -15, "y": 15, "label": "EN" }
     ],
     "outputs": [
-      { "x": 30, "y": -10, "label": "OUT" }
+      { "x": 30, "y": 0, "label": "OUT" }
     ]
   },
   "logic": {

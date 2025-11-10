@@ -14,22 +14,24 @@ class SubcircuitComponent extends Component {
             const inputs = this.circuitInstance.components.filter(c => c.type === 'INPUT');
             const outputs = this.circuitInstance.components.filter(c => c.type === 'OUTPUT');
             
-            // Create input pins on the left
+            // Create input pins on the left (centered coordinate system)
             const inputSpacing = this.height / (inputs.length + 1);
             inputs.forEach((input, i) => {
-                this.addInputPin(0, inputSpacing * (i + 1));
+                const yOffset = inputSpacing * (i + 1) - this.height / 2;
+                this.addInputPin(-this.width / 2, yOffset);
             });
             
-            // Create output pins on the right
+            // Create output pins on the right (centered coordinate system)
             const outputSpacing = this.height / (outputs.length + 1);
             outputs.forEach((output, i) => {
-                this.addOutputPin(this.width, outputSpacing * (i + 1));
+                const yOffset = outputSpacing * (i + 1) - this.height / 2;
+                this.addOutputPin(this.width / 2, yOffset);
             });
         } else {
-            // Fallback if no circuit instance
-            this.addInputPin(0, this.height / 3);
-            this.addInputPin(0, 2 * this.height / 3);
-            this.addOutputPin(this.width, this.height / 2);
+            // Fallback if no circuit instance (centered coordinate system)
+            this.addInputPin(-this.width / 2, -this.height / 6);
+            this.addInputPin(-this.width / 2, this.height / 6);
+            this.addOutputPin(this.width / 2, 0);
         }
     }
 
@@ -50,15 +52,23 @@ class SubcircuitComponent extends Component {
         const inputs = this.circuitInstance.components.filter(c => c.type === 'INPUT');
         inputs.forEach((input, i) => {
             if (this.inputPins[i]) {
-                input.state = this.inputPins[i].getValue();
+                // Set the state.value property instead of state directly
+                if (!input.state) {
+                    input.state = {};
+                }
+                input.state.value = this.inputPins[i].getValue();
+                // Evaluate INPUT to propagate value to its output pin
                 input.evaluate();
             }
         });
         
-        // 2. Evaluate all components in the subcircuit using topological sort
+        // 2. Evaluate all other components in the subcircuit using topological sort
+        // (skip INPUT components as they're already evaluated)
         const ordered = this.topologicalSort();
         ordered.forEach(component => {
-            component.evaluate();
+            if (component.type !== 'INPUT') {
+                component.evaluate();
+            }
         });
         
         // 3. Map the subcircuit's OUTPUT components to output pin values
