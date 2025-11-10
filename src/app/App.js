@@ -224,6 +224,11 @@ class App {
             this.importSubcircuit();
         });
 
+        // Export PNG button
+        document.getElementById('btn-export-png').addEventListener('click', async () => {
+            await this.exportToPNG();
+        });
+
         // New circuit button
         document.getElementById('btn-new-circuit').addEventListener('click', async () => {
             const name = await this.modal.showPrompt('Enter circuit name:', 'New Circuit');
@@ -804,6 +809,211 @@ class App {
                 this.updateStatus('Import failed: ' + err.message);
             }
         }
+    }
+
+    // Export current circuit (or all circuits) to PNG
+    async exportToPNG() {
+        try {
+            const result = await this.modal.show({
+                title: 'Export to PNG',
+                message: 'Export current circuit only, or all circuits (main + subcircuits)?',
+                type: 'confirm',
+                confirmText: 'Current Circuit',
+                cancelText: 'All Circuits'
+            });
+            
+            if (result === null) return; // User closed modal
+            
+            if (result === true) {
+                // "Current Circuit" button (confirm) was clicked
+                await this.exportSingleCircuitToPNG(this.currentCircuitName);
+            } else {
+                // "All Circuits" button (cancel) was clicked
+                await this.exportAllCircuitsToPNG();
+            }
+        } catch (err) {
+            console.error('PNG export failed:', err);
+            this.updateStatus('PNG export failed: ' + err.message);
+        }
+    }
+
+    // Export a single circuit to PNG
+    async exportSingleCircuitToPNG(circuitName) {
+        const circuit = this.circuits.get(circuitName);
+        if (!circuit) return;
+        
+        // Calculate bounds of circuit (including all components and wires)
+        const bounds = this.calculateCircuitBounds(circuit);
+        const padding = 50;
+        
+        // Use a high resolution scale factor for crisp export
+        const exportScale = 4;
+        
+        const width = bounds.width + padding * 2;
+        const height = bounds.height + padding * 2;
+        
+        // Create an offscreen canvas at high resolution
+        const offscreenCanvas = document.createElement('canvas');
+        offscreenCanvas.width = width * exportScale;
+        offscreenCanvas.height = height * exportScale;
+        const ctx = offscreenCanvas.getContext('2d');
+        
+        // Scale the context for high resolution
+        ctx.scale(exportScale, exportScale);
+        
+        // Enable high quality rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Transparent background (no fill)
+        // ctx is already transparent by default
+        
+        // Save original renderer state
+        const originalCanvas = this.renderer.canvas;
+        const originalCtx = this.renderer.ctx;
+        const originalScale = this.renderer.scale;
+        const originalOffsetX = this.renderer.offsetX;
+        const originalOffsetY = this.renderer.offsetY;
+        const originalColors = { ...this.renderer.colors };
+        
+        // Temporarily use offscreen canvas with black/white colors
+        this.renderer.canvas = offscreenCanvas;
+        this.renderer.ctx = ctx;
+        this.renderer.scale = 1;
+        this.renderer.offsetX = -bounds.minX + padding;
+        this.renderer.offsetY = -bounds.minY + padding;
+        
+        // Override colors for black/white export
+        // Set a flag so renderer knows to skip fills
+        this.renderer.exportMode = true;
+        this.renderer.colors = {
+            ...this.renderer.colors,
+            background: 'transparent',
+            component: 'transparent',
+            componentBorder: '#000000',
+            componentSelected: '#000000',
+            wire: '#000000',
+            wireActive: '#000000',
+            wireSelected: '#000000',
+            pin: '#000000',
+            pinActive: '#000000',
+            text: '#000000',
+            inputOff: 'transparent',
+            inputOn: 'transparent',
+            outputOff: 'transparent',
+            outputOn: 'transparent'
+        };
+        
+        // Render the circuit
+        ctx.save();
+        ctx.translate(this.renderer.offsetX, this.renderer.offsetY);
+        
+        // Draw wires
+        circuit.wires.forEach(wire => {
+            this.renderer.drawWire(wire, false);
+        });
+        
+        // Draw components
+        circuit.components.forEach(comp => {
+            this.renderer.drawComponent(comp, false, false);
+        });
+        
+        ctx.restore();
+        
+        // Restore original renderer state
+        this.renderer.canvas = originalCanvas;
+        this.renderer.ctx = originalCtx;
+        this.renderer.scale = originalScale;
+        this.renderer.offsetX = originalOffsetX;
+        this.renderer.offsetY = originalOffsetY;
+        this.renderer.colors = originalColors;
+        this.renderer.exportMode = false;
+        
+        // Convert to blob and download
+        return new Promise((resolve) => {
+            offscreenCanvas.toBlob(blob => {
+                if (!blob) {
+                    console.error('Failed to create blob from canvas');
+                    this.updateStatus(`Failed to export ${circuitName}`);
+                    resolve();
+                    return;
+                }
+                
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${circuitName}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                this.updateStatus(`Exported ${circuitName} to PNG`);
+                resolve();
+            }, 'image/png');
+        });
+    }
+
+    // Export all circuits to PNG
+    async exportAllCircuitsToPNG() {
+        const circuitNames = Array.from(this.circuits.keys());
+        
+        for (const name of circuitNames) {
+            await this.exportSingleCircuitToPNG(name);
+            // Small delay between exports
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
+        this.updateStatus(`Exported ${circuitNames.length} circuits to PNG`);
+    }
+
+    // Calculate bounding box for all components and wires in a circuit
+    calculateCircuitBounds(circuit) {
+        let minX = Infinity, minY = Infinity;
+        let maxX = -Infinity, maxY = -Infinity;
+        
+        // Check all components
+        if (circuit.components && circuit.components.length > 0) {
+            circuit.components.forEach(comp => {
+                const def = comp.definition;
+                const width = def?.rendering?.width || 60;
+                const height = def?.rendering?.height || 40;
+                
+                minX = Math.min(minX, comp.x - width / 2);
+                minY = Math.min(minY, comp.y - height / 2);
+                maxX = Math.max(maxX, comp.x + width / 2);
+                maxY = Math.max(maxY, comp.y + height / 2);
+            });
+        }
+        
+        // Check all wires
+        if (circuit.wires && circuit.wires.length > 0) {
+            circuit.wires.forEach(wire => {
+                if (wire.points && wire.points.length > 0) {
+                    wire.points.forEach(point => {
+                        minX = Math.min(minX, point.x);
+                        minY = Math.min(minY, point.y);
+                        maxX = Math.max(maxX, point.x);
+                        maxY = Math.max(maxY, point.y);
+                    });
+                }
+            });
+        }
+        
+        // Default to canvas size if empty
+        if (minX === Infinity) {
+            minX = 0;
+            minY = 0;
+            maxX = 800;
+            maxY = 600;
+        }
+        
+        return {
+            minX,
+            minY,
+            maxX,
+            maxY,
+            width: maxX - minX,
+            height: maxY - minY
+        };
     }
 
     async processImportedSubcircuit(data) {

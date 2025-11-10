@@ -13,8 +13,8 @@
       { "x": -40, "y": 15, "label": "D5" },
       { "x": -40, "y": 25, "label": "D6" },
       { "x": -40, "y": 35, "label": "D7" },
-      { "x": -15, "y": 50, "label": "MISO" },
-      { "x": 0, "y": 50, "label": "START" }
+      { "x": -10, "y": 50, "label": "MISO" },
+      { "x": 10, "y": 50, "label": "START" }
     ],
     "outputs": [
       { "x": 40, "y": -30, "label": "MOSI" },

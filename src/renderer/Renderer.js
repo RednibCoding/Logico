@@ -10,6 +10,7 @@ class Renderer {
         this.offsetY = 0;
         this.gridSize = 20;
         this.showGrid = true;
+        this.exportMode = false; // Flag for PNG export mode (no fills)
 
         // Colors
         this.colors = {
@@ -147,14 +148,21 @@ class Renderer {
 
     drawSubcircuit(x, y, w, h, circuitName, selected) {
         // Draw rectangular box (centered like other components)
-        this.ctx.fillStyle = selected ? this.colors.componentSelected : '#2d4a5c';
-        this.ctx.strokeStyle = selected ? this.colors.wireSelected : '#4a90d9';
+        const fillColor = selected ? this.colors.componentSelected : '#2d4a5c';
+        const strokeColor = selected ? this.colors.wireSelected : '#4a90d9';
+        
+        if (!this.exportMode) {
+            this.ctx.fillStyle = fillColor;
+        }
+        this.ctx.strokeStyle = this.exportMode ? '#000000' : strokeColor;
         this.ctx.lineWidth = selected ? 3 : 2;
         
         const left = x - w / 2;
         const top = y - h / 2;
         
-        this.ctx.fillRect(left, top, w, h);
+        if (!this.exportMode) {
+            this.ctx.fillRect(left, top, w, h);
+        }
         this.ctx.strokeRect(left, top, w, h);
 
         // Draw circuit name
@@ -194,16 +202,34 @@ class Renderer {
         if (pin.label && pin.label.trim() !== '') {
             this.ctx.fillStyle = this.colors.text;
             this.ctx.font = '9px monospace';
-            this.ctx.textBaseline = 'middle';
             
-            if (pin.type === 'input') {
-                // Label to the left of input pins
-                this.ctx.textAlign = 'right';
-                this.ctx.fillText(pin.label, x - 8, y);
+            // Determine pin position relative to component center
+            const isTopOrBottom = Math.abs(pin.offsetX) < Math.abs(pin.offsetY);
+            
+            if (isTopOrBottom) {
+                // Pin is on top or bottom edge - place label above/below
+                this.ctx.textAlign = 'center';
+                if (pin.offsetY < 0) {
+                    // Top edge - label above
+                    this.ctx.textBaseline = 'bottom';
+                    this.ctx.fillText(pin.label, x, y - 8);
+                } else {
+                    // Bottom edge - label below
+                    this.ctx.textBaseline = 'top';
+                    this.ctx.fillText(pin.label, x, y + 8);
+                }
             } else {
-                // Label to the right of output pins
-                this.ctx.textAlign = 'left';
-                this.ctx.fillText(pin.label, x + 8, y);
+                // Pin is on left or right edge - place label left/right
+                this.ctx.textBaseline = 'middle';
+                if (pin.type === 'input') {
+                    // Label to the left of input pins
+                    this.ctx.textAlign = 'right';
+                    this.ctx.fillText(pin.label, x - 8, y);
+                } else {
+                    // Label to the right of output pins
+                    this.ctx.textAlign = 'left';
+                    this.ctx.fillText(pin.label, x + 8, y);
+                }
             }
         }
     }
@@ -318,6 +344,13 @@ class Renderer {
         this.ctx.strokeStyle = selected ? this.colors.wireSelected : this.colors.componentBorder;
         this.ctx.lineWidth = selected ? 3 : 2;
 
+        // Helper to fill only if not in export mode
+        const fillIfNeeded = () => {
+            if (!this.exportMode) {
+                this.ctx.fill();
+            }
+        };
+
         // Draw shape
         switch (renderDef.shape) {
             case 'and':
@@ -328,7 +361,7 @@ class Renderer {
                 this.ctx.arc(x + width * 0.1, y, height / 2, -Math.PI / 2, Math.PI / 2);
                 this.ctx.lineTo(x - width/2, y + height/2);
                 this.ctx.closePath();
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 break;
 
@@ -339,7 +372,7 @@ class Renderer {
                 this.ctx.quadraticCurveTo(x + width * 0.1, y - height/2, x + width * 0.4, y);
                 this.ctx.quadraticCurveTo(x + width * 0.1, y + height/2, x - width/2, y + height/2);
                 this.ctx.quadraticCurveTo(x - width * 0.3, y, x - width/2, y - height/2);
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 break;
 
@@ -350,7 +383,7 @@ class Renderer {
                 this.ctx.quadraticCurveTo(x + width * 0.1, y - height/2, x + width * 0.4, y);
                 this.ctx.quadraticCurveTo(x + width * 0.1, y + height/2, x - width/2 + 5, y + height/2);
                 this.ctx.quadraticCurveTo(x - width * 0.3 + 5, y, x - width/2 + 5, y - height/2);
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 // Extra arc for XOR
                 this.ctx.beginPath();
@@ -367,12 +400,12 @@ class Renderer {
                 this.ctx.arc(x + width * 0.05, y, height / 2, -Math.PI / 2, Math.PI / 2);
                 this.ctx.lineTo(x - width/2, y + height/2);
                 this.ctx.closePath();
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 // Inversion bubble
                 this.ctx.beginPath();
                 this.ctx.arc(x + width * 0.35, y, 4, 0, Math.PI * 2);
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 break;
 
@@ -383,12 +416,12 @@ class Renderer {
                 this.ctx.quadraticCurveTo(x + width * 0.05, y - height/2, x + width * 0.35, y);
                 this.ctx.quadraticCurveTo(x + width * 0.05, y + height/2, x - width/2, y + height/2);
                 this.ctx.quadraticCurveTo(x - width * 0.3, y, x - width/2, y - height/2);
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 // Inversion bubble
                 this.ctx.beginPath();
                 this.ctx.arc(x + width * 0.42, y, 4, 0, Math.PI * 2);
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 break;
 
@@ -405,7 +438,7 @@ class Renderer {
                 this.ctx.lineTo(x - width/2, y - height/2 + radius);
                 this.ctx.quadraticCurveTo(x - width/2, y - height/2, x - width/2 + radius, y - height/2);
                 this.ctx.closePath();
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 break;
 
@@ -415,7 +448,7 @@ class Renderer {
                 this.ctx.lineTo(x + width/2, y);
                 this.ctx.lineTo(x - width/2, y + height/2);
                 this.ctx.closePath();
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 break;
 
@@ -426,7 +459,7 @@ class Renderer {
                                    (isActive ? this.colors.inputOn : this.colors.inputOff);
                 this.ctx.beginPath();
                 this.ctx.arc(x, y, Math.min(width, height) / 2, 0, Math.PI * 2);
-                this.ctx.fill();
+                fillIfNeeded();
                 this.ctx.stroke();
                 break;
 
@@ -435,12 +468,16 @@ class Renderer {
                 const isRectActive = component.getValue?.() || false;
                 this.ctx.fillStyle = selected ? this.colors.componentSelected :
                                    (isRectActive ? this.colors.outputOn : this.colors.outputOff);
-                this.ctx.fillRect(x - width/2, y - height/2, width, height);
+                if (!this.exportMode) {
+                    this.ctx.fillRect(x - width/2, y - height/2, width, height);
+                }
                 this.ctx.strokeRect(x - width/2, y - height/2, width, height);
                 break;
 
             default: // default rectangle
-                this.ctx.fillRect(x - width/2, y - height/2, width, height);
+                if (!this.exportMode) {
+                    this.ctx.fillRect(x - width/2, y - height/2, width, height);
+                }
                 this.ctx.strokeRect(x - width/2, y - height/2, width, height);
         }
 

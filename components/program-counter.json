@@ -13,10 +13,10 @@
       { "x": -40, "y": 10, "label": "D5" },
       { "x": -40, "y": 20, "label": "D6" },
       { "x": -40, "y": 30, "label": "D7" },
-      { "x": 0, "y": 55, "label": "CLK" },
+      { "x": -15, "y": 55, "label": "CLK" },
       { "x": 15, "y": 55, "label": "INC" },
-      { "x": -15, "y": 55, "label": "LOAD" },
-      { "x": -30, "y": 55, "label": "RST" }
+      { "x": -30, "y": 55, "label": "LOAD" },
+      { "x": 30, "y": 55, "label": "RST" }
     ],
     "outputs": [
       { "x": 40, "y": -40, "label": "Q0" },
