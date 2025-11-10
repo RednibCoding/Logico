@@ -185,6 +185,10 @@ class App {
     setupUI() {
         // Simulate button
         document.getElementById('btn-simulate').addEventListener('click', () => {
+            // Deselect all components
+            this.getCurrentCircuit().components.forEach(comp => comp.selected = false);
+            this.interactionManager.draggedComponent = null;
+            
             this.simulator.evaluate(); // Evaluate once before starting
             this.simulator.start();
             this.updateStatus('Simulating...');
@@ -197,6 +201,12 @@ class App {
             this.simulator.evaluate(); // Re-evaluate to update disconnected components
             this.updateStatus('Stopped');
             this.updateSimulationUI(false);
+        });
+
+        // Reset button
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            this.simulator.reset();
+            this.updateStatus('Circuit reset');
         });
 
         // Save button
