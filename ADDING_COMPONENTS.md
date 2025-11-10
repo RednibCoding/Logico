@@ -107,6 +107,7 @@ Define your component's logic using JavaScript code that has access to `inputs`,
 - **`code`** - Main evaluation logic, runs every simulation step. Has access to `inputs`, `outputs`, `state`.
 - **`update`** (optional) - Update code for time-based components, runs every frame. Has access to `inputs`, `outputs`, `state`, `timestamp`.
 - **`onClick`** (optional) - Click handler for interactive components. Has access to `inputs`, `outputs`, `state`.
+- **`reset`** (optional) - Reset code that runs when the Reset button is pressed. Should restore component to initial state. Has access to `state`.
 
 **Examples:**
 
@@ -145,9 +146,36 @@ Counter (with state):
 ```json
 "logic": {
   "state": {
-    "count": 0
+    "count": 0,
+    "lastClk": false
   },
-  "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nif (rst) {\n  state.count = 0;\n} else if (clk && !state.lastClk) {\n  state.count = (state.count + 1) % 16;\n}\nstate.lastClk = clk;\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}"
+  "code": "const clk = inputs[0].getValue();\nconst rst = inputs[1].getValue();\nif (rst) {\n  state.count = 0;\n} else if (clk && !state.lastClk) {\n  state.count = (state.count + 1) % 16;\n}\nstate.lastClk = clk;\nfor (let i = 0; i < 4; i++) {\n  outputs[i].setValue((state.count >> i) & 1);\n}",
+  "reset": "state.count = 0; state.lastClk = false;"
+}
+```
+
+Flip-flop (with state and reset):
+```json
+"logic": {
+  "state": {
+    "value": false,
+    "lastClock": false
+  },
+  "code": "const data = inputs[0].getValue();\nconst clock = inputs[1].getValue();\nif (clock && !state.lastClock) {\n  state.value = data;\n}\nstate.lastClock = clock;\noutputs[0].setValue(state.value);",
+  "reset": "state.value = false; state.lastClock = false;"
+}
+```
+
+Memory component (with state, init, and reset):
+```json
+"logic": {
+  "state": {
+    "memory": null,
+    "lastClock": false
+  },
+  "init": "state.memory = new Array(256).fill(0);",
+  "code": "// RAM logic here...",
+  "reset": "state.memory = new Array(256).fill(0); state.lastClock = false;"
 }
 ```
 
@@ -388,7 +416,8 @@ Components are grouped by category in the palette:
 5. **Multi-line code** - Use `\n` for readability in JSON
 6. **onClick for interactivity** - Add click handlers for buttons, switches, inputs
 7. **update for animation** - Use update code for clocks, timers, animations
-8. **No JavaScript needed** - 99% of components can be pure JSON!
+8. **reset for stateful components** - Always add reset code for components with state (counters, registers, memory, flip-flops)
+9. **No JavaScript needed** - 99% of components can be pure JSON!
 
 ## File Structure
 
@@ -415,9 +444,10 @@ Logico/
 2. **Define component** - Add pins, logic code, and rendering shape
 3. **Test your code** - Use logic.code for evaluation
 4. **Add state if needed** - Use logic.state for persistent data
-5. **Add interactivity** - Use logic.onClick for user interaction
-6. **Add animation** - Use logic.update for time-based behavior
-7. **Reload page** - Component appears automatically!
+5. **Add reset for stateful components** - Use logic.reset to restore initial state
+6. **Add interactivity** - Use logic.onClick for user interaction
+7. **Add animation** - Use logic.update for time-based behavior
+8. **Reload page** - Component appears automatically!
 
 **No JavaScript files to edit. No code to compile. Pure data-driven design!**
 
