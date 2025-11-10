@@ -2,6 +2,8 @@
 
 A web-based logic circuit simulator similar to Logisim, built with HTML5 Canvas and JavaScript.
 
+![](screenshot.png)
+
 ## Try it
 https://rednibcoding.github.io/Logico/
 
